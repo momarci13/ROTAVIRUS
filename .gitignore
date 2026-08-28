@@ -55,3 +55,12 @@ data/metadata/validation_report_*.json
 /MANUAL_EXTRACTION_QUEUE.md
 /SUM_MISMATCH_LOG.md
 /MODEL_VALIDATION_REPORT.md
+
+# stray local artifacts
+.coverage
+.coverage.*
+/gsd.txt
+/out.html
+/w7.pdf
+/osap.pdf
+/*.pdf
