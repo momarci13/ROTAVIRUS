@@ -47,3 +47,11 @@ Thumbs.db
 data/metadata/run_manifest/*.json
 data/metadata/validation_report_*.json
 !data/metadata/run_manifest/.gitkeep
+
+# Generated run reports (regenerated every run; not reproducibility inputs)
+/VALIDATION_REPORT.md
+/SCHEMA_DRIFT_REPORT.md
+/BROKEN_LINKS.md
+/MANUAL_EXTRACTION_QUEUE.md
+/SUM_MISMATCH_LOG.md
+/MODEL_VALIDATION_REPORT.md
