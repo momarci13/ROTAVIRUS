@@ -1,0 +1,400 @@
+# Central source registry. Every collector reads its block here. Nothing about
+# *where* data comes from is hard-coded in Python.
+#
+# Per-source keys:
+#   base_url            : root used for building / resolving links
+#   parser              : pdf_tables | excel | html_tables | geojson | raw | manual
+#   update_frequency    : weekly | monthly | quarterly | yearly | irregular | static
+#   rate_limit_seconds  : minimum delay between requests to this host (default 1.0)
+#   robots_allowed      : false => collector must use `manual/` import mode, never scrape
+#   render_required     : true  => needs playwright (--render) or manual download
+#   resources[]         : known entry points. `status: verified | to_discover | broken`
+#
+# "to_discover" endpoints are resolved on the first live run; the collector writes
+# the concrete URL back here (or leaves it and logs to BROKEN_LINKS.md on failure).
+
+defaults:
+  rate_limit_seconds: 1.0
+  timeout_seconds: 60
+  max_retries: 5
+  user_agent_template: "rotavirus-research-pipeline/0.1 (+mailto:{contact_email})"
+
+sources:
+
+  # ------------------------------------------------------------------ NNGYK ---
+  nngyk:
+    description: "Nemzeti Népegészségügyi és Gyógyszerészeti Központ - rotavirus surveillance"
+    base_url: "https://nngyk.gov.hu"
+    parser: pdf_tables
+    update_frequency: weekly
+    rate_limit_seconds: 2.0
+    robots_allowed: true
+    render_required: true
+    surveillance_break_year: 2014          # rotavirus a standalone category only from 2014
+    resources:
+      - key: weekly_list
+        type: listing
+        url: "https://nngyk.gov.hu/hu/fertozo-betegsegek/fertozo-betegsegek-heti-adatai.html"
+        status: verified
+        notes: "File list rendered by JS; underlying JSON endpoint to_discover."
+      - key: weekly_list_json
+        type: api
+        url: null
+        status: to_discover
+        notes: "XHR/JSON behind jarvpub.nngyk.gov.hu/hu/fertozo-betegsegek-heti-adatai"
+      - key: jarvpub_portal
+        type: listing
+        url: "https://jarvpub.nngyk.gov.hu/hu/fertozo-betegsegek-heti-adatai"
+        status: verified
+      - key: weekly_pdf_pattern_current
+        type: pdf_pattern
+        url: "https://nngyk.gov.hu/dokumentumok/fertozo_betegsegek_heti_adatai/{year}/Heti%20tajekoztato%20a%20hazai%20jarvanyugyi%20helyzetrol%20{year}.%20{week:02d}.%20het.pdf"
+        status: verified
+        notes: "Use ONLY when weekly_list / weekly_list_json discovery fails. Accents vary by year."
+      - key: weekly_pdf_pattern_accented
+        type: pdf_pattern
+        url: "https://nngyk.gov.hu/dokumentumok/fertozo_betegsegek_heti_adatai/{year}/Heti%20t%C3%A1j%C3%A9koztat%C3%B3%20a%20hazai%20j%C3%A1rv%C3%A1ny%C3%BCgyi%20helyzetr%C5%91l%20{year}.%20{week:02d}.%20h%C3%A9t.pdf"
+        status: verified
+      - key: epinfo_weekly_pattern
+        type: pdf_pattern
+        url: "https://nngyk.gov.hu/dokumentumok/Epinfo/heti_szamok/{year}/honlapheti_{year}_{week:02d}.pdf"
+        status: verified
+        notes: "Pre-2017 sometimes capitalised 'Honlapheti_'."
+      - key: annual_reports_list
+        type: listing
+        url: "https://nngyk.gov.hu/hu/fertozo-betegsegek/fertozo-betegsegek-eves-jelentesei.html"
+        status: verified
+      - key: annual_reports_list_legacy
+        type: listing
+        url: "https://www.antsz.hu/felso_menu/temaink/jarvany/Fertozo_betegsegek/Fertozo_eves_jelentesk"
+        status: verified
+      - key: osap_1561_annual
+        type: pdf_set
+        status: verified
+        items:
+          2024: "https://www.antsz.hu/data/cms114784/OSAP_Fertozo_2024_honlapra.pdf"
+          2023: "https://www.antsz.hu/data/cms113436/OSAP_Fertozo_2023_honlapra.pdf"
+          2022: "https://www.antsz.hu/data/cms108083/OSAP_Fertozo_2022_honlapra.pdf"
+          2021: "https://www.antsz.hu/data/cms104974/OSAP_Fertozo_2021_honlapra.pdf"
+          2020: "https://www.antsz.hu/data/cms100089/OSAP_Fertozo_2020_honlapra.pdf"
+          2019: "https://www.antsz.hu/data/cms96760/OSAP_Fertozo_2019_honlapra.pdf"
+          2018: "https://www.antsz.hu/data/cms92714/Fertozo_2018.pdf"
+          2017: "https://www.antsz.hu/data/cms87738/Fertozo_2017.pdf"
+
+  # -------------------------------------------------------------------- KSH ---
+  ksh:
+    description: "Központi Statisztikai Hivatal - demography, socioeconomy, price indices, geography"
+    base_url: "https://www.ksh.hu"
+    parser: excel
+    update_frequency: yearly
+    robots_allowed: true
+    resources:
+      - key: stadat_ege0028
+        type: file_set
+        url: "https://www.ksh.hu/stadat_files/ege/hu/ege0028.xlsx"
+        alt: ["https://www.ksh.hu/stadat_files/ege/hu/ege0028.csv"]
+        status: verified
+        notes: "National annual notifiable infectious diseases."
+      - key: stadat_ege0060
+        type: file_set
+        url: "https://www.ksh.hu/stadat_files/ege/hu/ege0060.xlsx"
+        alt: ["https://www.ksh.hu/stadat_files/ege/hu/ege0060.csv"]
+        status: verified
+        notes: "National monthly notifiable infectious diseases."
+      - key: tszj_structure
+        type: listing
+        url: "https://www.ksh.hu/teruleti_szamjel_menu"
+        status: verified
+        notes: "Territorial number system (TSZJ). Yearly xlsx; district codes live here."
+      - key: tszj_elements_pattern
+        type: file_pattern
+        url: "https://www.ksh.hu/docs/osztalyozasok/teruleti_szamjel/teruleti_szamjelrendszer_struktura_elemei_{year}.xlsx"
+        status: to_discover
+      - key: helysegnevtar
+        type: listing
+        url: "https://www.ksh.hu/helysegnevtar"
+        status: verified
+      - key: hnk_pattern
+        type: pdf_pattern
+        url: "https://www.ksh.hu/docs/hun/hnk/hnk_{year}.pdf"
+        status: verified
+        notes: "Administrative gazetteer. Verified: hnk_2019.pdf."
+      - key: settlement_id_codes
+        type: pdf
+        url: "https://www.ksh.hu/docs/hun/info/02osap/2022/segedlet/s221405.pdf"
+        status: verified
+      - key: timea
+        type: manual
+        url: "https://map.ksh.hu/timea/?locale=hu"
+        status: verified
+        notes: "District-level indicators 2012-. Manual export -> data/raw/ksh/manual/timea/."
+      - key: tajekoztatasi_adatbazis
+        type: manual
+        url: "https://www.ksh.hu/adatbazis"
+        robots_allowed: false
+        status: verified
+        notes: "robots.txt disallows crawling. Manual export -> data/raw/ksh/manual/adatbazis/."
+      - key: statinfo_tstar
+        type: api
+        url: "http://statinfo.ksh.hu/Statinfo/QueryServlet?ha=TA2025_W"
+        status: verified
+      - key: statinfo_bpstar
+        type: api
+        url: "http://statinfo.ksh.hu/Statinfo/QueryServlet?ha=TK1001_W"
+        status: verified
+      - key: census_2022
+        type: listing
+        url: "https://nepszamlalas2022.ksh.hu/adatbazis/"
+        alt: ["https://www.ksh.hu/nepszamlalas/reszletes_tablak"]
+        status: verified
+      - key: tappenz_pattern
+        type: pdf_pattern
+        url: "https://www.ksh.hu/docs/hun/xftp/idoszaki/pdf/tappenz{yy}.pdf"
+        status: verified
+        notes: "Verified: tappenz16.pdf, tappenz13.pdf."
+      - key: health_yearbook_pattern
+        type: pdf_pattern
+        url: "https://www.ksh.hu/docs/hun/xftp/idoszaki/evkonyv/egeszsegugyi_evkonyv_{year}.pdf"
+        status: verified
+        notes: "Verified: egeszsegugyi_evkonyv_2014.pdf."
+      - key: komplex_mutato_methodology
+        type: pdf
+        url: "https://www.ksh.hu/docs/hun/xftp/idoszaki/pdf/kompjar14.pdf"
+        status: verified
+      - key: price_index_stadat
+        type: file_set
+        url: null
+        status: to_discover
+        notes: "STADAT 'ar' theme: health CPI + earnings index for the deflator. Resolve table id and write here."
+
+  # ------------------------------------------------------------------- NEAK ---
+  neak:
+    description: "Nemzeti Egészségbiztosítási Alapkezelő - financing / cost parameters"
+    base_url: "https://www.neak.gov.hu"
+    parser: html_tables
+    update_frequency: yearly
+    robots_allowed: true
+    render_required: true
+    resources:
+      - key: alapdij_kozlemeny
+        type: listing
+        url: "https://www.neak.gov.hu/szakmai_kozlemenyek/alapdij_kozlemeny"
+        status: verified
+        notes: "Ft/súlyszám and Ft/német pont. JS-rendered."
+      - key: besorolo_kezikonyv
+        type: listing
+        url: "https://www.neak.gov.hu/felso_menu/szakmai_oldalak/gyogyito_megeleozo_ellatas/szabalykonyvek/besorolo"
+        status: verified
+      - key: jarobeteg_szabalykonyv
+        type: listing
+        url: "https://finanszirozas.neak.gov.hu/szabalykonyv/index.asp?verzio=175&mid=0"
+        status: verified
+      - key: pupha
+        type: file_set
+        url: "https://www.neak.gov.hu/letoltheto/ATFO_dok/gyogyszer/PUPHA"
+        status: verified
+      - key: korhazi_agyszam
+        type: listing
+        url: "https://www.neak.gov.hu/felso_menu/szakmai_oldalak/publikus_forgalmi_adatok/gyogyito_megelozo_forgalmi_adat/fekvobeteg_szakellatas_stat/korhazi_agyszam"
+        status: verified
+      - key: fin_adatok_szolg
+        type: listing
+        url: "https://www.neak.gov.hu/letoltheto/altfin_dok/altfin_virt_dok2/publikus_adatok_gyme/fin_adatok_szolg"
+        status: verified
+
+  # ------------------------------------------------------------------- NFSZ ---
+  nfsz:
+    description: "Nemzeti Foglalkoztatási Szolgálat - district-level monthly labour market"
+    base_url: "https://nfsz.munka.hu"
+    parser: excel
+    update_frequency: monthly
+    robots_allowed: true
+    resources:
+      - key: telepulessoros
+        type: listing
+        url: "https://nfsz.munka.hu/tart/stat_telepulessoros_adatok"
+        status: verified
+        notes: "Settlement-level unemployment. File list to_discover."
+      - key: teruleti_bontas
+        type: listing
+        url: "https://nfsz.munka.hu/tart/stat_teruleti_bontas"
+        status: verified
+      - key: egyeni_berek
+        type: listing
+        url: "https://nfsz.munka.hu/tart/stat_egyeni_berek"
+        status: verified
+
+  # ------------------------------------------------------------------- OKFO ---
+  okfo:
+    description: "Országos Kórházi Főigazgatóság - primary care capacity (vacant practices)"
+    base_url: "https://alapellatas.okfo.gov.hu"
+    parser: html_tables
+    update_frequency: irregular
+    robots_allowed: true
+    resources:
+      - key: vacant_gp
+        type: html_table
+        url: "https://alapellatas.okfo.gov.hu/tajekoztato-a-tartosan-betoltetlen-haziorvosi-korzetekrol/"
+        status: verified
+        notes: "Snapshot only, no downloadable file. Save raw HTML with datestamp; build time series from repeated runs."
+      - key: vacant_dental
+        type: html_table
+        url: "https://alapellatas.okfo.gov.hu/tajekoztato-a-tartosan-betoltetlen-fogorvosi-korzetekrol/"
+        status: verified
+      - key: listings
+        type: html_table
+        url: "https://alapellatas.okfo.gov.hu/listings/"
+        status: verified
+      - key: wayback_cdx
+        type: api
+        url: "http://web.archive.org/cdx/search/cdx?url={target}&output=json&collapse=digest"
+        status: verified
+        notes: "Historical snapshots for the vacant-practice pages."
+
+  # -------------------------------------------------------------------- MAK ---
+  mak:
+    description: "Magyar Államkincstár - municipal annual budget reports"
+    base_url: "https://www.allamkincstar.gov.hu"
+    parser: excel
+    update_frequency: yearly
+    robots_allowed: true
+    resources:
+      - key: onkormanyzati_beszamolok
+        type: listing
+        url: "https://www.allamkincstar.gov.hu/Koltsegvetes/kozpenzugyi-portal/kozpenzugyi-portal-riport--es-adatvagyona/onkormanyzati-alrendszer-alanyainak-eves-koltsegvetesi-beszamoloi"
+        status: verified
+
+  # ----------------------------------------------------------------- JOGTAR ---
+  jogtar:
+    description: "Legal texts + municipal vaccination-support decrees"
+    base_url: "https://net.jogtar.hu"
+    parser: html_tables
+    update_frequency: static
+    robots_allowed: true
+    resources:
+      - key: nm_9_1993
+        type: legal_text
+        url: "https://net.jogtar.hu/jogszabaly?docid=99300009.nm"
+        status: verified
+        notes: "HBCs súlyszámok, járóbeteg pontok."
+      - key: korm_43_1999
+        type: legal_text
+        url: "https://njt.jog.gov.hu/jogszabaly/1999-43-20-22"
+        status: verified
+      - key: nefmi_10_2012
+        type: legal_text
+        url: "https://net.jogtar.hu/jogszabaly?docid=a1200010.nem"
+        status: verified
+      - key: korm_8_2025_alapdijak
+        type: pdf
+        url: "https://hbcs.hu/uploads/jogszabaly/4468/fajlok/8_2025_II_6_Korm_rendelet.pdf"
+        status: verified
+      - key: korm_290_2014
+        type: legal_text
+        url: "https://njt.jog.gov.hu/jogszabaly/2014-290-20-22"
+        status: verified
+        notes: "Kedvezményezett járások, komplex mutató (2014 data)."
+      - key: korm_218_2012
+        type: legal_text
+        url: "https://njt.jog.gov.hu/jogszabaly/2012-218-20-22"
+        status: verified
+        notes: "Járási beosztás - the authoritative district partition."
+      - key: emmi_1_2014
+        type: legal_text
+        url: "https://njt.jog.gov.hu/jogszabaly/2014-1-20-5H"
+        alt: ["https://www.antsz.hu/data/cms63809/1_2014_I_16_EMMI_2014nov1_jen.pdf"]
+        status: verified
+        notes: "Notifiable-disease reporting reform -> the 2014 surveillance break."
+      - key: njt_root
+        type: listing
+        url: "https://njt.hu/"
+        status: verified
+        notes: "Also the municipal decree repository (önkormányzati rendelettár)."
+      - key: municipal_vaccination_decrees
+        type: legal_text_set
+        status: verified
+        notes: "Seed set for existing_local_funding / scenario 0."
+        items:
+          budapest_02: "https://masodikkerulet.hu/node/42029"
+          budapest_03_obuda: "https://obuda.hu/ugyintezes/onkormanyzati-tamogatas-vedooltasra-felhivas-es-a-kerelem-adatlapja-2/"
+          budapest_13: "https://www.budapest13.hu/ugy/vedooltas_tamogatasa/"
+          budapest_06_terezvaros: "https://terezvaros.hu/ugyintezes/szocialis-ugyek/rotavirus-elleni-vedooltas"
+
+  # ------------------------------------------------------------- HUNGAROMET ---
+  hungaromet:
+    description: "HungaroMet open data portal - meteorology"
+    base_url: "https://odp.met.hu"
+    parser: raw
+    update_frequency: monthly
+    robots_allowed: true
+    resources:
+      - key: climate_observations
+        type: dir_index
+        url: "https://odp.met.hu/climate/observations_hungary/"
+        status: verified
+        notes: "Subdirs: 10_minutes/ hourly/ daily/ daily_rain/ avg_daily/ monthly/ meta/ ..."
+      - key: cds_api_howto
+        type: api
+        url: "https://cds.climate.copernicus.eu/how-to-api"
+        status: verified
+        notes: "ERA5-Land via cdsapi; key from CDS_API_KEY (era5 extra)."
+
+  # -------------------------------------------------------------------- GEO ---
+  geo:
+    description: "Administrative boundaries"
+    base_url: "https://data2.openstreetmap.hu"
+    parser: geojson
+    update_frequency: quarterly
+    robots_allowed: true
+    boundary_provider: osm            # osm | lechner  (lechner is paid; opt-in)
+    resources:
+      - key: osm_districts
+        type: geojson
+        url: "https://data2.openstreetmap.hu/hatarok/index.php?admin=7j"
+        status: verified
+      - key: osm_settlements
+        type: geojson
+        url: "https://data2.openstreetmap.hu/hatarok/index.php?admin=8"
+        status: verified
+      - key: eurostat_gisco_nuts
+        type: listing
+        url: "https://ec.europa.eu/eurostat/web/gisco/geodata/statistical-units/territorial-units-statistics"
+        status: verified
+      - key: irsz_hnk_helper
+        type: repo
+        url: "https://github.com/tamas-ferenci/IrszHnk"
+        status: verified
+        notes: "Postal-code <-> settlement helper."
+      - key: lechner_boundaries
+        type: manual
+        url: "https://lechnerkozpont.hu/oldal/magyar-kozigazgatasi-hatarok"
+        status: verified
+        notes: "Paid. Only used if boundary_provider: lechner and file placed in data/raw/geo/manual/."
+
+  # ------------------------------------------------------------------- TEIR ---
+  teir:
+    description: "Országos Területfejlesztési és Területrendezési Információs Rendszer"
+    base_url: "https://www.teir.hu"
+    parser: manual
+    update_frequency: irregular
+    robots_allowed: false
+    resources:
+      - key: teir_manual
+        type: manual
+        url: "https://www.teir.hu"
+        status: verified
+        notes: "Registration-gated. Manual export -> data/raw/other/teir/. Collector is a stub."
+
+  # ------------------------------------------------------------- NNGYK FOIA ---
+  nngyk_foia:
+    description: "Placeholder for real district-level rotavirus data obtained via FOIA/data request"
+    base_url: null
+    parser: excel
+    update_frequency: irregular
+    robots_allowed: true
+    resources:
+      - key: foia_delivery
+        type: manual
+        url: null
+        status: to_discover
+        notes: "When NNGYK delivers district data, drop it in data/raw/nngyk_foia/ ; loads as geo_level='district', evidence_class='observed'."

@@ -1,0 +1,69 @@
+# Canonical disease-name dictionary for PDF table extraction. Maps every spelling
+# variant seen across NNGYK / Epinfo / OSAP vintages to one canonical key.
+# `aliases` are matched case-insensitively after whitespace collapse.
+
+canonical:
+
+  rotavirus_gastroenteritis:
+    label_hu: "Rotavírus-gastroenteritis"
+    icd10: ["A08.0"]
+    notifiable_from: 2014                # standalone category from 2014 (1/2014. EMMI r.)
+    aliases:
+      - "rotavírus-gastroenteritis"
+      - "rotavírus gastroenteritis"
+      - "rotavirus-gastroenteritis"
+      - "rotavírus gastro-enteritis"
+      - "rotavírus enteritis"
+      - "rotavírus okozta gastroenteritis"
+      - "rota-vírus gastroenteritis"
+
+  enteritis_infectiosa:
+    label_hu: "Enteritis infectiosa"
+    icd10: ["A00-A09"]
+    notifiable_from: 1998
+    notes: "Pre-2014 umbrella that absorbed rotavirus. Not comparable to the standalone series."
+    aliases:
+      - "enteritis infectiosa"
+      - "fertőző bélhurut"
+      - "enteritis infectiosa (összes)"
+
+  # Reference rows used only for the 20-row structure check of the county table.
+  campylobacteriosis:
+    label_hu: "Campylobacteriosis"
+    aliases: ["campylobacteriosis", "campylobacter enteritis"]
+  salmonellosis:
+    label_hu: "Salmonellosis"
+    aliases: ["salmonellosis", "egyéb salmonellosis"]
+  dysenteria:
+    label_hu: "Dysenteria"
+    aliases: ["dysenteria", "shigellosis"]
+
+# Canonical ordering of the 20 territorial rows of the weekly county table
+# (19 vármegye + Budapest). Used to validate row completeness, NOT to key data
+# (district_id keys data).
+county_table_rows:
+  - "Budapest"
+  - "Baranya"
+  - "Bács-Kiskun"
+  - "Békés"
+  - "Borsod-Abaúj-Zemplén"
+  - "Csongrád-Csanád"
+  - "Fejér"
+  - "Győr-Moson-Sopron"
+  - "Hajdú-Bihar"
+  - "Heves"
+  - "Jász-Nagykun-Szolnok"
+  - "Komárom-Esztergom"
+  - "Nógrád"
+  - "Pest"
+  - "Somogy"
+  - "Szabolcs-Szatmár-Bereg"
+  - "Tolna"
+  - "Vas"
+  - "Veszprém"
+  - "Zala"
+
+county_name_aliases:
+  "Csongrád": "Csongrád-Csanád"          # renamed 2020
+  "Budapest főváros": "Budapest"
+  "Bács-Kiskun megye": "Bács-Kiskun"

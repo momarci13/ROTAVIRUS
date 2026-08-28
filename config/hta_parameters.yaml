@@ -1,0 +1,34 @@
+# Health-technology-assessment framing parameters. All configurable; the code
+# reads every value from here. Base price year drives the deflator.
+
+perspective: societal            # societal | healthcare_payer | government
+base_price_year: 2025
+
+discounting:
+  discount_rate_costs: 0.035     # Hungarian HTA guideline default
+  discount_rate_effects: 0.035
+  time_horizon_years: 5
+
+cost_effectiveness_threshold:
+  value_huf_per_qaly: null       # FILL: e.g. 3x GDP/capita. evidence_class: assumed
+  source_citation: null
+  source_url: null
+  source_year: null
+  confidence: low
+
+deflator:
+  # Which price index deflates which cost component. Index ids resolved by the
+  # ksh collector into cost_parameters.yaml -> deflators.
+  medical_costs: health_cpi
+  productivity_costs: earnings_index
+  vaccination_costs: health_cpi
+  default: headline_cpi
+
+qaly:
+  # No Hungary-specific rotavirus QALY weight exists (see README limitations).
+  disutility_per_episode: null   # evidence_class: assumed
+  episode_duration_days: null
+  source_citation: null
+  source_url: null
+  source_year: null
+  confidence: low

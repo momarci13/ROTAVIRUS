@@ -1,0 +1,45 @@
+# Territorial code system + harmonisation strategy.
+# The district NAME is never a primary key; district_id (KSH TSZJ code) is.
+
+canonical:
+  # KSH Területi Számjelrendszer (TSZJ) is authoritative for the code system.
+  district_id_source: tszj
+  district_id_format: "zero-padded string"      # keep leading zeros; never int
+  settlement_id_digits: 5                        # KSH törzsszám
+  county_count_expected: 20                      # 19 vármegye + Budapest
+  # Do NOT hard-code a district count. The registry derives it per year and the
+  # test only checks internal consistency. KSH currently reports 197 district-level
+  # units incl. 23 Budapest districts; the district system started 2013-01-01
+  # (218/2012. (VIII. 13.) Korm. r.).
+  district_system_start: "2013-01-01"
+
+crosswalk:
+  name_normalisation:
+    lowercase: true
+    strip_accents: false          # keep Hungarian accents; normalise separately
+    collapse_whitespace: true
+    drop_tokens: ["község", "város", "nagyközség", "kkt.", "kistérség"]
+  fuzzy:
+    enabled: true
+    method: token_sort_ratio
+    threshold: 90                  # >= threshold => candidate, NEVER auto-applied
+    manual_review_file: "config/crosswalk_manual.csv"
+
+harmonisation:
+  # Order is fixed: KTE partition -> population-weighted apportionment -> truncation.
+  target: kte                      # konzisztens területi egységek
+  population_weight_year: census   # 'census' => nearest census; or an explicit year
+  extensive_vars_method: weighted_sum
+  intensive_vars_method: numerator_denominator_split
+  allow_truncation: true
+  truncation_requires_log: true
+  log_file: "data/metadata/harmonisation_log.json"
+
+boundary_changes:
+  output_file: "data/metadata/boundary_changes.json"
+  compare: consecutive_years
+
+sources_years:
+  # Which yearly vintages to ingest when building the registry. Extend as files arrive.
+  tszj: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+  hnk: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]

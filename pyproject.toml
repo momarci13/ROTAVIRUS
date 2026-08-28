@@ -1,0 +1,122 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rotavirus-scraper"
+version = "0.1.0"
+description = "Reproducible Hungarian district-level rotavirus data-collection and need-based support-allocation pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Rotavirus health-policy research group" }]
+
+# Base install: everything the geography / validation / costs / allocation
+# pipeline and the plain (non-PDF, non-geospatial) collectors need. This set
+# installs cleanly on Windows without system libraries.
+dependencies = [
+    "requests>=2.31",
+    "httpx>=0.27",
+    "tenacity>=8.2",
+    "requests-cache>=1.2",
+    "pandas>=2.1",
+    "polars>=0.20",
+    "pyarrow>=15",
+    "numpy>=1.26",
+    "pandera>=0.18",
+    "openpyxl>=3.1",
+    "xlrd>=2.0",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "html5lib>=1.1",
+    "pyyaml>=6.0",
+    "pydantic>=2.6",
+    "python-dotenv>=1.0",
+    "structlog>=24.1",
+    "typer>=0.12",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+# PDF table extraction. camelot-py needs Ghostscript on PATH; on Windows install
+# Ghostscript separately (see README). pdfplumber alone is pure-Python and is the
+# fallback strategy.
+pdf = [
+    "pdfplumber>=0.11",
+    "camelot-py[cv]>=0.11",
+]
+# Spatial stack. Heavy wheels; on Windows prefer conda-forge or pipwin if pip fails.
+spatial = [
+    "geopandas>=0.14",
+    "shapely>=2.0",
+    "pyproj>=3.6",
+    "libpysal>=4.9",
+    "esda>=2.5",
+    "spreg>=1.4",
+]
+# JS-rendered pages (NNGYK file list, NEAK alapdíj közlemény). After install run
+# `playwright install chromium`.
+render = ["playwright>=1.42"]
+# ERA5-Land reanalysis via the Copernicus CDS API.
+era5 = ["cdsapi>=0.7"]
+# Bayesian small-area model (replaces the placeholder in processing/).
+bayes = ["pymc>=5.10", "arviz>=0.17"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "hypothesis>=6.98",
+    "responses>=0.25",
+    "ruff>=0.3",
+    "mypy>=1.9",
+    "types-requests",
+    "types-PyYAML",
+    "pandas-stubs",
+]
+all = [
+    "rotavirus-scraper[pdf,spatial,render,era5,bayes,dev]",
+]
+
+[project.scripts]
+rotavirus-scraper = "scraper.run:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+scraper = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "PTH", "RUF"]
+ignore = [
+    "E501",   # long lines tolerated in config-ish literals
+    "B905",   # zip strict= not always available intent
+    "N818",   # domain exception names read better without an "Error" suffix
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["N802", "N803", "N806", "B007", "RUF007"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+packages = ["scraper"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["scraper.geography", "scraper.validation", "scraper.costs", "scraper.allocation"]
+branch = true

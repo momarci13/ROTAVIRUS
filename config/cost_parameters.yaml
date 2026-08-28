@@ -1,0 +1,248 @@
+# Cost parameters. Every parameter carries: values[].value_huf_nominal, price_year,
+# evidence_class, source_citation, source_url, source_year, confidence.
+#
+# RULE: a parameter with `required: true` and a null value HALTS the cost model
+# with an informative error naming the parameter and its source_url. The pipeline
+# NEVER substitutes a default number. Fill values from the cited Hungarian sources.
+
+meta:
+  base_price_year: 2025          # must match hta_parameters.yaml :: base_price_year
+  currency: HUF
+
+deflators:
+  # Resolved by the ksh collector (price_index_stadat resource). id -> yearly index.
+  - id: health_cpi
+    description: "Egészségügy fogyasztóiár-index (KSH)"
+    source_url: "https://www.ksh.hu/stadat"          # exact table id: to_discover
+    base_year: 2025
+    series: {}                                        # {year: index_value}
+  - id: earnings_index
+    description: "Bruttó átlagkereset-index (KSH)"
+    source_url: "https://www.ksh.hu/stadat"
+    base_year: 2025
+    series: {}
+  - id: headline_cpi
+    description: "Fogyasztóiár-index, teljes (KSH)"
+    source_url: "https://www.ksh.hu/stadat"
+    base_year: 2025
+    series: {}
+
+parameters:
+
+  - id: hbcs_base_rate
+    description: "Aktív fekvőbeteg-ellátás alapdíja (Ft/súlyszám)"
+    required: true
+    unit: huf_per_weight
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        price_year: 2025
+        evidence_class: observed
+        source_citation: "NEAK közlemény a fekvő- és járóbeteg-szakellátás teljesítményegységeinek forintértékéről; 8/2025. (II. 6.) Korm. r."
+        source_url: "https://www.neak.gov.hu/szakmai_kozlemenyek/alapdij_kozlemeny"
+        source_year: 2025
+        confidence: high
+
+  - id: outpatient_point_value
+    description: "Járóbeteg-szakellátás német pont forintértéke (Ft/pont)"
+    required: true
+    unit: huf_per_point
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        price_year: 2025
+        evidence_class: observed
+        source_citation: "NEAK alapdíj-közlemény"
+        source_url: "https://www.neak.gov.hu/szakmai_kozlemenyek/alapdij_kozlemeny"
+        source_year: 2025
+        confidence: high
+
+  - id: hbcs_weight_paed_gastroenteritis
+    description: "Gyermekkori gastroenteritis HBCs súlyszáma"
+    required: true
+    unit: weight
+    hbcs_code: null                # FILL from 9/1993 NM r. melléklet
+    values:
+      - year: 2025
+        value_huf_nominal: null    # dimensionless weight; stored in `weight`
+        weight: null
+        price_year: 2025
+        evidence_class: observed
+        source_citation: "9/1993. (IV. 2.) NM rendelet, HBCs besorolási melléklet"
+        source_url: "https://net.jogtar.hu/jogszabaly?docid=99300009.nm"
+        source_year: 2025
+        confidence: high
+
+  - id: outpatient_points_per_case
+    description: "Egy rotavírus-eset átlagos járóbeteg-pontszáma (tevékenységi kódok súlyozott összege)"
+    required: false
+    unit: point
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        points: null
+        price_year: 2025
+        evidence_class: estimated
+        source_citation: "Járóbeteg szabálykönyv v175 tevékenységi kódok alapján számítva"
+        source_url: "https://finanszirozas.neak.gov.hu/szabalykonyv/index.asp?verzio=175&mid=0"
+        source_year: 2025
+        confidence: medium
+
+  - id: gp_visit_cost
+    description: "Háziorvosi vizit fajlagos költsége rotavírus-eset esetén (Ft)"
+    required: false
+    unit: huf
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        price_year: 2025
+        evidence_class: estimated
+        source_citation: null
+        source_url: "https://www.neak.gov.hu/felso_menu/szakmai_oldalak"
+        source_year: null
+        confidence: low
+
+  - id: hospitalisation_rate_u5
+    description: "Rotavírus-esetek kórházi felvételi aránya 5 év alatt"
+    required: true
+    unit: ratio
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        ratio: null
+        price_year: null
+        evidence_class: assumed
+        source_citation: null            # FILL from literature; NEVER a bare number
+        source_url: null
+        source_year: null
+        confidence: low
+
+  - id: underreporting_multiplier
+    description: "Bejelentett -> valós esetszám szorzó (aluljelentés korrekció)"
+    required: true
+    unit: multiplier
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        multiplier: null
+        price_year: null
+        evidence_class: assumed
+        source_citation: null
+        source_url: null
+        source_year: null
+        confidence: low
+
+  - id: parental_work_loss_probability
+    description: "Egy gyermekbetegséghez kapcsolódó szülői munkakiesés valószínűsége (pi_szuloi_kieses)"
+    required: true
+    unit: probability
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        probability: null
+        evidence_class: assumed
+        source_citation: null
+        source_url: null
+        source_year: null
+        confidence: low
+
+  - id: mean_illness_duration_days
+    description: "Átlagos betegségtartam (d_atlag), nap"
+    required: true
+    unit: days
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        days: null
+        evidence_class: assumed
+        source_citation: null
+        source_url: null
+        source_year: null
+        confidence: low
+
+  - id: daily_gross_wage
+    description: "Napi bruttó átlagkereset (W_i / D_munkanap alapja), Ft/nap"
+    required: true
+    unit: huf_per_day
+    geo_level: county                    # KSH earnings are county-level
+    values:
+      - year: 2024
+        value_huf_nominal: null
+        price_year: 2024
+        evidence_class: observed
+        source_citation: "KSH bruttó átlagkereset, területi bontás"
+        source_url: "https://www.ksh.hu/stadat"
+        source_year: 2024
+        confidence: high
+
+  - id: employer_contribution_rate
+    description: "Munkáltatói közteher-kulcs (tau), a termelékenységveszteséghez"
+    required: true
+    unit: rate
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        rate: null
+        price_year: null
+        evidence_class: observed
+        source_citation: "Hatályos szociális hozzájárulási adó mérték"
+        source_url: "https://njt.hu/"
+        source_year: 2025
+        confidence: high
+
+  - id: working_days_per_year
+    description: "Munkanapok száma évente (D_munkanap)"
+    required: true
+    unit: days
+    values:
+      - year: 2024
+        value_huf_nominal: null
+        days: 251
+        price_year: null
+        evidence_class: observed
+        source_citation: "Munka törvénykönyve szerinti munkanaptár, 2024"
+        source_url: "https://njt.hu/"
+        source_year: 2024
+        confidence: high
+
+  - id: vaccine_course_price
+    description: "Teljes rotavírus oltási sorozat közfinanszírozott ára (Ft)"
+    required: true
+    unit: huf
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        price_year: 2025
+        evidence_class: observed
+        source_citation: "PUPHA publikus gyógyszertörzs"
+        source_url: "https://www.neak.gov.hu/letoltheto/ATFO_dok/gyogyszer/PUPHA"
+        source_year: 2025
+        confidence: medium
+
+  - id: vaccine_administration_cost
+    description: "Oltás beadásának díja (Ft/sorozat)"
+    required: false
+    unit: huf
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        price_year: 2025
+        evidence_class: estimated
+        source_citation: null
+        source_url: "https://net.jogtar.hu/jogszabaly?docid=99300009.nm"
+        source_year: null
+        confidence: low
+
+  - id: vaccine_efficacy
+    description: "Rotavírus oltás hatásossága súlyos gastroenteritis ellen"
+    required: false
+    unit: ratio
+    values:
+      - year: 2025
+        value_huf_nominal: null
+        ratio: null
+        evidence_class: assumed
+        source_citation: null
+        source_url: null
+        source_year: null
+        confidence: low

@@ -1,0 +1,99 @@
+# Variable inventory. EVERY column of data/processed/district_panel.parquet must
+# appear here with a source_id. Creating a panel column with no entry here is an
+# error (processing/panel.py enforces it).
+#
+# Per variable:
+#   source_id      : key into config/sources.yaml :: sources
+#   tier           : 1 (core / directly used) | 2 (context) | 3 (exploratory)
+#   block          : identifier | demography | epidemiology | socioeconomic |
+#                    healthcare | fiscal | environment | cost | allocation | quality
+#   geo_level      : country | county | district
+#   time_resolution: none | yearly | monthly | weekly
+#   unit
+#   evidence_class : observed | estimated | assumed   (default for the column)
+#   extensive      : true => population-weighted apportionment on harmonisation
+
+variables:
+
+  # ---- identifiers ----
+  district_id:        {source_id: ksh,  tier: 1, block: identifier, geo_level: district, time_resolution: none,   unit: code,   evidence_class: observed}
+  district_name:      {source_id: ksh,  tier: 2, block: identifier, geo_level: district, time_resolution: none,   unit: text,   evidence_class: observed}
+  county_id:          {source_id: ksh,  tier: 1, block: identifier, geo_level: county,   time_resolution: none,   unit: code,   evidence_class: observed}
+  county_name:        {source_id: ksh,  tier: 2, block: identifier, geo_level: county,   time_resolution: none,   unit: text,   evidence_class: observed}
+  nuts3_code:         {source_id: geo,  tier: 2, block: identifier, geo_level: county,   time_resolution: none,   unit: code,   evidence_class: observed}
+  year:              {source_id: ksh,  tier: 1, block: identifier, geo_level: district, time_resolution: yearly, unit: year,   evidence_class: observed}
+  month:             {source_id: ksh,  tier: 2, block: identifier, geo_level: district, time_resolution: monthly, unit: month,  evidence_class: observed}
+  iso_week:          {source_id: nngyk,tier: 1, block: identifier, geo_level: county,   time_resolution: weekly, unit: week,   evidence_class: observed}
+  period_start:      {source_id: ksh,  tier: 1, block: identifier, geo_level: district, time_resolution: none,   unit: date,   evidence_class: observed}
+  period_end:        {source_id: ksh,  tier: 1, block: identifier, geo_level: district, time_resolution: none,   unit: date,   evidence_class: observed}
+
+  # ---- demography ----
+  population_total:   {source_id: ksh, tier: 1, block: demography, geo_level: district, time_resolution: yearly, unit: persons, evidence_class: observed, extensive: true}
+  population_0_4:     {source_id: ksh, tier: 1, block: demography, geo_level: district, time_resolution: yearly, unit: persons, evidence_class: observed, extensive: true}
+  population_0_1:     {source_id: ksh, tier: 2, block: demography, geo_level: district, time_resolution: yearly, unit: persons, evidence_class: observed, extensive: true}
+  births:            {source_id: ksh, tier: 2, block: demography, geo_level: district, time_resolution: yearly, unit: persons, evidence_class: observed, extensive: true}
+
+  # ---- epidemiology ----
+  rotavirus_cases_district_modelled:    {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: cases, evidence_class: estimated, extensive: true}
+  rotavirus_cases_district_modelled_lo: {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: cases, evidence_class: estimated, extensive: true}
+  rotavirus_cases_district_modelled_hi: {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: cases, evidence_class: estimated, extensive: true}
+  rotavirus_incidence_u5_modelled:      {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: per_1000, evidence_class: estimated, extensive: false}
+  hospitalisations_modelled:            {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: cases, evidence_class: estimated, extensive: true}
+  expected_cases_per_1000_u5_modelled:  {source_id: nngyk, tier: 1, block: epidemiology, geo_level: district, time_resolution: yearly, unit: per_1000, evidence_class: estimated, extensive: false}
+
+  # ---- socioeconomic ----
+  jobseeker_rate:            {source_id: nfsz, tier: 1, block: socioeconomic, geo_level: district, time_resolution: monthly, unit: ratio, evidence_class: observed, extensive: false}
+  registered_jobseekers:     {source_id: nfsz, tier: 2, block: socioeconomic, geo_level: district, time_resolution: monthly, unit: persons, evidence_class: observed, extensive: true}
+  pit_income_per_capita:     {source_id: ksh, tier: 1, block: socioeconomic, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: observed, extensive: false}
+  low_education_ratio:       {source_id: ksh, tier: 1, block: socioeconomic, geo_level: district, time_resolution: yearly, unit: ratio, evidence_class: observed, extensive: false}
+  housing_deprivation_ratio: {source_id: ksh, tier: 2, block: socioeconomic, geo_level: district, time_resolution: yearly, unit: ratio, evidence_class: observed, extensive: false}
+  sewerage_ratio:            {source_id: ksh, tier: 2, block: socioeconomic, geo_level: district, time_resolution: yearly, unit: ratio, evidence_class: observed, extensive: false}
+  population_density:        {source_id: ksh, tier: 2, block: socioeconomic, geo_level: district, time_resolution: yearly, unit: per_km2, evidence_class: observed, extensive: false}
+  komplex_mutato_2014:       {source_id: jogtar, tier: 1, block: socioeconomic, geo_level: district, time_resolution: none, unit: index, evidence_class: observed, extensive: false}
+  kedvezmenyezett_status:    {source_id: jogtar, tier: 1, block: socioeconomic, geo_level: district, time_resolution: none, unit: bool, evidence_class: observed, extensive: false}
+
+  # ---- healthcare ----
+  gp_services:                  {source_id: okfo, tier: 2, block: healthcare, geo_level: district, time_resolution: yearly, unit: count, evidence_class: observed, extensive: true}
+  paediatric_services:         {source_id: okfo, tier: 1, block: healthcare, geo_level: district, time_resolution: yearly, unit: count, evidence_class: observed, extensive: true}
+  vacant_gp_practices:         {source_id: okfo, tier: 2, block: healthcare, geo_level: district, time_resolution: monthly, unit: count, evidence_class: observed, extensive: true}
+  vacant_paediatric_practices: {source_id: okfo, tier: 1, block: healthcare, geo_level: district, time_resolution: monthly, unit: count, evidence_class: observed, extensive: true}
+  vacant_paediatric_practice_ratio: {source_id: okfo, tier: 1, block: healthcare, geo_level: district, time_resolution: monthly, unit: ratio, evidence_class: estimated, extensive: false}
+  hospital_beds_county:        {source_id: neak, tier: 2, block: healthcare, geo_level: county, time_resolution: yearly, unit: beds, evidence_class: observed, extensive: true}
+  paediatric_beds_county:      {source_id: neak, tier: 1, block: healthcare, geo_level: county, time_resolution: yearly, unit: beds, evidence_class: observed, extensive: true}
+  paed_beds_per_1000_u5_inverse: {source_id: neak, tier: 1, block: healthcare, geo_level: county, time_resolution: yearly, unit: per_1000, evidence_class: estimated, extensive: false}
+  travel_time_to_paed_hospital: {source_id: geo, tier: 1, block: healthcare, geo_level: district, time_resolution: none, unit: minutes, evidence_class: estimated, extensive: false}
+
+  # ---- fiscal ----
+  municipal_own_revenue_per_capita:  {source_id: mak, tier: 1, block: fiscal, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: observed, extensive: false}
+  municipal_expenditure_per_capita:  {source_id: mak, tier: 2, block: fiscal, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: observed, extensive: false}
+  existing_local_funding:            {source_id: jogtar, tier: 1, block: fiscal, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: observed, extensive: true}
+
+  # ---- environment ----
+  temp_mean:         {source_id: hungaromet, tier: 3, block: environment, geo_level: district, time_resolution: monthly, unit: celsius, evidence_class: observed, extensive: false}
+  temp_min:          {source_id: hungaromet, tier: 3, block: environment, geo_level: district, time_resolution: monthly, unit: celsius, evidence_class: observed, extensive: false}
+  temp_max:          {source_id: hungaromet, tier: 3, block: environment, geo_level: district, time_resolution: monthly, unit: celsius, evidence_class: observed, extensive: false}
+  precipitation:     {source_id: hungaromet, tier: 3, block: environment, geo_level: district, time_resolution: monthly, unit: mm, evidence_class: observed, extensive: false}
+  relative_humidity: {source_id: hungaromet, tier: 3, block: environment, geo_level: district, time_resolution: monthly, unit: percent, evidence_class: observed, extensive: false}
+
+  # ---- cost (nominal + real, both mandatory) ----
+  cost_per_case_huf_nominal:              {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  cost_per_case_huf_real_2025:            {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  cost_per_hospitalisation_huf_nominal:   {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  cost_per_hospitalisation_huf_real_2025: {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  vaccination_cost_huf_nominal:           {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  vaccination_cost_huf_real_2025:         {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: false}
+  productivity_cost_huf_nominal:          {source_id: ksh, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: true}
+  productivity_cost_huf_real_2025:        {source_id: ksh, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: true}
+  expected_total_cost_huf_real_2025:      {source_id: neak, tier: 1, block: cost, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: true}
+
+  # ---- allocation ----
+  need_score:   {source_id: ksh, tier: 1, block: allocation, geo_level: district, time_resolution: yearly, unit: index, evidence_class: estimated, extensive: false}
+  aid_amount_huf: {source_id: ksh, tier: 1, block: allocation, geo_level: district, time_resolution: yearly, unit: huf, evidence_class: estimated, extensive: true}
+  scenario_id:  {source_id: ksh, tier: 1, block: allocation, geo_level: district, time_resolution: yearly, unit: code, evidence_class: assumed, extensive: false}
+
+  # ---- quality ----
+  evidence_class:    {source_id: ksh, tier: 1, block: quality, geo_level: district, time_resolution: none, unit: enum, evidence_class: observed}
+  quality_flag:      {source_id: ksh, tier: 1, block: quality, geo_level: district, time_resolution: none, unit: text, evidence_class: observed}
+  source_id:         {source_id: ksh, tier: 1, block: quality, geo_level: district, time_resolution: none, unit: text, evidence_class: observed}
+  extraction_run_id: {source_id: ksh, tier: 1, block: quality, geo_level: district, time_resolution: none, unit: text, evidence_class: observed}
+  missing_reason:    {source_id: ksh, tier: 1, block: quality, geo_level: district, time_resolution: none, unit: text, evidence_class: observed}

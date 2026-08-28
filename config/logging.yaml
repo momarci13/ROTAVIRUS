@@ -1,0 +1,19 @@
+# structlog / stdlib logging configuration. Consumed by
+# scraper/core/logging_setup.py :: configure_logging().
+
+level: INFO                     # DEBUG | INFO | WARNING | ERROR
+console:
+  enabled: true
+  format: human                # human | json
+  colours: true
+file:
+  enabled: true
+  directory: logs
+  filename_template: "run_{date}.jsonl"
+  format: json
+timestamps:
+  utc: true
+  key: timestamp
+extra_context:
+  # merged into every log line
+  pipeline: rotavirus-scraper

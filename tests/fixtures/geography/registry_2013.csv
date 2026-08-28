@@ -1,0 +1,8 @@
+settlement_id,settlement_name,postal_codes,district_id,district_name,county_id,county_name,nuts3_code,nuts2_code
+10001,Budapest I. kerület,1011;1012;1013;1014;1015;1016,0101,Budapest 01. kerület,01,Budapest,HU110,HU11
+10002,Budapest II. kerület,1021;1022;1023;1024;1025,0101,Budapest 01. kerület,01,Budapest,HU110,HU11
+20001,Miskolc,3525;3526;3527;3528;3529,0511,Miskolci járás,05,Borsod-Abaúj-Zemplén,HU311,HU31
+20002,Felsőzsolca,3561,0511,Miskolci járás,05,Borsod-Abaúj-Zemplén,HU311,HU31
+20003,Onga,3562,0511,Miskolci járás,05,Borsod-Abaúj-Zemplén,HU311,HU31
+20004,Encs,3860,0512,Encsi járás,05,Borsod-Abaúj-Zemplén,HU311,HU31
+20005,Forró,3849,0512,Encsi járás,05,Borsod-Abaúj-Zemplén,HU311,HU31

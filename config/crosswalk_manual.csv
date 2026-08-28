@@ -1,0 +1,6 @@
+source_id,raw_value,raw_kind,candidate_district_id,candidate_district_name,match_score,status,decided_by,decided_at,notes
+# raw_kind: name | postal_code
+# status: pending | confirmed | rejected
+# Fuzzy matches are appended here as `pending` and are NEVER used by the panel
+# until a human sets status=confirmed. Non-matching rows are also logged here,
+# never dropped silently.

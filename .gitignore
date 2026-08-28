@@ -1,0 +1,42 @@
+# --- Data: raw / intermediate / processed are reproducible, NOT tracked ---
+data/raw/
+data/intermediate/
+data/processed/
+
+# --- Caches ---
+.cache/
+.requests_cache.sqlite
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- Environments / secrets ---
+.venv/
+venv/
+*.env
+.env
+!.env.example
+
+# --- Logs ---
+logs/*
+!logs/.gitkeep
+
+# --- Build ---
+*.egg-info/
+build/
+dist/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Tracked despite the rules above ---
+!data/metadata/
+!data/metadata/**
+!tests/fixtures/
+!tests/fixtures/**
+!config/*.yaml
+!**/.gitkeep

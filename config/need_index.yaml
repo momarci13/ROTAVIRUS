@@ -1,0 +1,57 @@
+# Need-index definition. FULLY config-driven: the research group changes
+# dimensions, member variables, direction and weights here without touching code.
+
+standardisation: zscore          # zscore | minmax | rank
+aggregation: mpi                 # weighted_sum | mpi | pca | entropy
+
+# For mpi (Mazziotta-Pareto) the penalty sign; for pca the number of components.
+mpi:
+  penalty_sign: negative         # non-compensatory: penalise horizontal variability
+pca:
+  n_components: 1
+entropy:
+  # entropy weighting derives weights from data dispersion; dimension weights below
+  # are then ignored unless `respect_dimension_weights: true`.
+  respect_dimension_weights: false
+
+# direction: higher_is_more_need (default) | inverse
+dimensions:
+
+  disease:
+    weight: 0.35
+    direction: higher_is_more_need
+    variables:
+      - expected_cases_per_1000_u5_modelled
+
+  socioeconomic:
+    weight: 0.30
+    direction: higher_is_more_need
+    variables:
+      - jobseeker_rate
+      - pit_income_per_capita_inverse
+      - low_education_ratio
+      - komplex_mutato_inverse
+
+  healthcare:
+    weight: 0.20
+    direction: higher_is_more_need
+    variables:
+      - vacant_paediatric_practice_ratio
+      - travel_time_to_paed_hospital
+      - paed_beds_per_1000_u5_inverse
+
+  fiscal_capacity:
+    weight: 0.15
+    direction: inverse
+    variables:
+      - municipal_own_revenue_per_capita
+      - pit_income_per_capita
+
+# Variables whose name ends in `_inverse` are sign-flipped after standardisation.
+inverse_suffix: "_inverse"
+
+missing_data:
+  # per-variable max share of missing districts before the run warns / errors
+  warn_threshold: 0.10
+  error_threshold: 0.40
+  impute: median                 # median | mean | none

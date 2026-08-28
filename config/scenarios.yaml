@@ -1,0 +1,152 @@
+# Allocation scenarios. Every scenario is a parameterisation of ONE generic
+# allocation function (see scraper/allocation/scenarios.py :: allocate_generic).
+#
+# Generic formula (scenario 5 is the general case):
+#   raw_i = ( Chat_i * (1 + eta * Ntilde_i) * (1 - kappa * Ftilde_i) - L_i )
+#   raw_i = max(raw_i, floor_i)
+#   aid_i = B * raw_i / sum_j(raw_j)                      # if normalise: true
+#
+# Symbols (all resolved from the panel / need-index / cost model):
+#   Chat_i   expected_total_cost_huf_real_2025            (set const=1 to drop cost)
+#   Ntilde_i standardised need score (need_index.yaml)    (0..1 after minmax)
+#   Ftilde_i standardised fiscal capacity                 (0..1)
+#   L_i      existing_local_funding  (scenario 0 baseline / cost-gap)
+#   P_u5_i   population_0_4
+#   Lambda_i modelled expected cases  (rotavirus_cases_district_modelled)
+#   S_i      socioeconomic sub-score ; H_i healthcare sub-score
+#
+# Keys per scenario:
+#   need_term            : none | full | socioeconomic | healthcare | epidemiological
+#   cost_term            : none(const 1) | expected_total_cost
+#   eta, kappa, alpha    : elasticities / exponents
+#   subtract_existing    : subtract L_i
+#   fiscal_penalty       : apply (1 - kappa*Ftilde)
+#   per_capita_base      : none | population_0_4  (multiplies raw before need term)
+#   eligibility_filter   : none | kedvezmenyezett_jaras_290_2014
+#   normalise_to_budget  : bool
+#   floor                : minimum raw_i (usually 0)
+
+default_budget_huf: 2500000000
+default_year: 2024
+
+scenarios:
+
+  - id: 0
+    name: "Status quo"
+    description: "Aid_i = existing_local_funding_i (no redistribution)."
+    per_capita_base: none
+    cost_term: none
+    need_term: none
+    subtract_existing: false
+    fiscal_penalty: false
+    passthrough_variable: existing_local_funding
+    normalise_to_budget: false
+    floor: 0
+
+  - id: 1
+    name: "Egyenlő fejkvóta"
+    description: "Aid_i = B * P_u5_i / sum P_u5."
+    per_capita_base: population_0_4
+    cost_term: none
+    need_term: none
+    eta: 0.0
+    kappa: 0.0
+    subtract_existing: false
+    fiscal_penalty: false
+    normalise_to_budget: true
+    floor: 0
+
+  - id: 2
+    name: "Epidemiológiai célzás"
+    description: "Aid_i = B * Lambda_i / sum Lambda."
+    per_capita_base: none
+    cost_term: none
+    need_term: epidemiological
+    eta: 1.0
+    kappa: 0.0
+    subtract_existing: false
+    fiscal_penalty: false
+    normalise_to_budget: true
+    floor: 0
+
+  - id: 3
+    name: "Szocioökonómiai célzás"
+    description: "Aid_i = B * P_u5_i * S_i^alpha / sum(...)."
+    per_capita_base: population_0_4
+    cost_term: none
+    need_term: socioeconomic
+    alpha: 1.0
+    eta: 1.0
+    kappa: 0.0
+    subtract_existing: false
+    fiscal_penalty: false
+    normalise_to_budget: true
+    floor: 0
+
+  - id: 4
+    name: "Kapacitás szerinti célzás"
+    description: "Like 3 with the healthcare sub-score H_i."
+    per_capita_base: population_0_4
+    cost_term: none
+    need_term: healthcare
+    alpha: 1.0
+    eta: 1.0
+    kappa: 0.0
+    subtract_existing: false
+    fiscal_penalty: false
+    normalise_to_budget: true
+    floor: 0
+
+  - id: 5
+    name: "Teljes szükségletalapú (fő)"
+    description: "Aid_i = Chat_i*(1+eta*Ntilde_i)*(1-kappa*Ftilde_i) - L_i, normalised to B."
+    per_capita_base: none
+    cost_term: expected_total_cost
+    need_term: full
+    eta: 0.5
+    kappa: 0.3
+    subtract_existing: true
+    fiscal_penalty: true
+    normalise_to_budget: true
+    floor: 0
+
+  - id: 6
+    name: "Költségrés"
+    description: "Aid_i = max(0, Chat_i - L_i - phi*FiscCap_i). Not normalised: reports the true fiscal cost."
+    per_capita_base: none
+    cost_term: expected_total_cost
+    need_term: none
+    eta: 0.0
+    kappa: 0.0
+    phi: 1.0
+    subtract_existing: true
+    fiscal_penalty: false
+    fiscal_capacity_subtraction: true
+    normalise_to_budget: false
+    floor: 0
+
+  - id: 7
+    name: "Küszöbös (jogszabályi)"
+    description: "Only 290/2014 kedvezményezett districts; within them, per-capita split."
+    per_capita_base: population_0_4
+    cost_term: none
+    need_term: none
+    eta: 0.0
+    kappa: 0.0
+    eligibility_filter: kedvezmenyezett_jaras_290_2014
+    subtract_existing: false
+    fiscal_penalty: false
+    normalise_to_budget: true
+    floor: 0
+
+sensitivity:
+  one_way_deltas: [0.10, 0.25, 0.50]
+  psa:
+    draws: 2000
+    cost_distribution: gamma
+    ratio_distribution: beta
+    efficacy_distribution: lognormal
+  weight_sampling:
+    method: dirichlet
+    draws: 2000
+    concentration: 20            # higher => tighter around the configured weights
