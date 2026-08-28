@@ -120,8 +120,9 @@ class Collector(ABC):
     ) -> None:
         self.config = config
         self.http = http
-        self.registry = registry or SourceRegistry()
-        self.cache = cache or ContentCache()
+        # NB: an empty SourceRegistry is falsy (len 0) -> use an identity check
+        self.registry = registry if registry is not None else SourceRegistry()
+        self.cache = cache if cache is not None else ContentCache()
         self.render = render
         self.log = get_logger(f"scraper.collector.{self.name}")
         self.report = CollectorReport(name=self.name)
@@ -183,11 +184,9 @@ class Collector(ABC):
                 hint="re-run with --render (playwright) or place a manual export",
             )
             return None
-        if self.http is None:
-            raise CollectorError("HTTPClient not provided to collector")
-
         dest = self.raw_dir / resource.target_name()
 
+        # cache hit: an unchanged, already-registered file needs no network
         if dest.exists() and not force:
             digest = sha256_bytes(dest.read_bytes())
             if self.registry.has_url_with_hash(resource.url, digest):
@@ -195,6 +194,9 @@ class Collector(ABC):
                 self.log.info("fetch.cache_hit", resource=resource.key, path=str(dest))
                 self.report.resource_hashes.append({"url": resource.url, "sha256": digest})
                 return dest
+
+        if self.http is None:
+            raise CollectorError("HTTPClient not provided to collector")
 
         urls_to_try = [resource.url, *resource.alt_urls]
         res = None
