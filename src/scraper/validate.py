@@ -44,7 +44,14 @@ def main(
     if table:
         targets = [Path(table)]
     elif all_tables:
-        targets = sorted(INTERMEDIATE_DIR.glob("**/*.parquet")) + sorted(PROCESSED_DIR.glob("*.parquet"))
+        # canonical parsed intermediates (<source>/<source>.parquet) + processed;
+        # skip per-file extraction artifacts (__table*, __quarantine) and quarantine/
+        inter = [
+            p
+            for p in sorted(INTERMEDIATE_DIR.glob("*/*.parquet"))
+            if "__" not in p.name and p.parent.name != "quarantine"
+        ]
+        targets = inter + sorted(PROCESSED_DIR.glob("*.parquet"))
     else:
         raise typer.BadParameter("pass --all or --table <path> (or --compare-modelled)")
 

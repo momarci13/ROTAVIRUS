@@ -34,8 +34,8 @@ report:                      ## Regenerate the data dictionary and the availabil
 	$(PY) -m scraper.report dictionary
 	$(PY) -m scraper.report availability
 
-test:                        ## Run the test suite with coverage
-	$(PY) -m pytest --cov=src/scraper --cov-report=term-missing
+test:                        ## Run the test suite with coverage (geography/validation/costs/allocation, target >=85%)
+	$(PY) -m pytest --cov --cov-report=term-missing --cov-fail-under=85
 
 lint:                        ## ruff
 	$(PY) -m ruff check .

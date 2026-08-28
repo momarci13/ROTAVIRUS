@@ -1,0 +1,74 @@
+{
+  "updated_at": "2026-08-28T18:13:34.656820+00:00",
+  "columns": [
+    {
+      "name": "district_id",
+      "dtype": "object"
+    },
+    {
+      "name": "district_name",
+      "dtype": "object"
+    },
+    {
+      "name": "county_id",
+      "dtype": "object"
+    },
+    {
+      "name": "year",
+      "dtype": "int64"
+    },
+    {
+      "name": "rotavirus_cases_district_modelled",
+      "dtype": "float64"
+    },
+    {
+      "name": "rotavirus_cases_district_modelled_lo",
+      "dtype": "float64"
+    },
+    {
+      "name": "rotavirus_cases_district_modelled_hi",
+      "dtype": "float64"
+    },
+    {
+      "name": "rotavirus_incidence_u5_modelled",
+      "dtype": "float64"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "confidence",
+      "dtype": "object"
+    },
+    {
+      "name": "method",
+      "dtype": "object"
+    },
+    {
+      "name": "county_name",
+      "dtype": "object"
+    },
+    {
+      "name": "nuts3_code",
+      "dtype": "object"
+    },
+    {
+      "name": "hospitalisations_modelled",
+      "dtype": "object"
+    },
+    {
+      "name": "expected_cases_per_1000_u5_modelled",
+      "dtype": "float64"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "quality_flag",
+      "dtype": "object"
+    }
+  ],
+  "hash": "4c3d857983626d1df896a5b682053ff6c78d75080ab7d4f872c6bbdcb19e92ac"
+}

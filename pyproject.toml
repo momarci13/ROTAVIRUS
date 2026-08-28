@@ -124,3 +124,13 @@ filterwarnings = ["ignore::DeprecationWarning"]
 [tool.coverage.run]
 source = ["scraper.geography", "scraper.validation", "scraper.costs", "scraper.allocation"]
 branch = true
+omit = [
+    "*/__main__.py",          # thin typer wrappers; covered by CLI smoke tests where safe
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

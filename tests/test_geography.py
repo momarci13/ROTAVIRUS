@@ -7,9 +7,21 @@ from datetime import date
 import pandas as pd
 import pytest
 
-from scraper.geography.build_registry import build_registry, check_consistency
+from scraper.geography.build_registry import (
+    build_registry,
+    check_consistency,
+    parse_canonical_csv,
+    parse_tszj_workbook,
+    write_registry,
+)
 from scraper.geography.crosswalk import Crosswalk, normalise_name
-from scraper.geography.harmonise import apportion_extensive, build_kte_partition
+from scraper.geography.harmonise import (
+    HarmonisationLog,
+    apportion_extensive,
+    apportion_intensive,
+    build_kte_partition,
+    harmonise_frame,
+)
 
 FIX = "tests/fixtures/geography"
 
@@ -154,3 +166,135 @@ def test_crosswalk_exact_and_postal(built, config, tmp_path, monkeypatch):
     assert r_none.district_id is None
     assert r_none.status == "pending"
     assert (tmp_path / "crosswalk_manual.csv").exists()  # unmatched row recorded, not dropped
+
+
+def test_crosswalk_fuzzy_goes_to_pending_not_panel(built, config, tmp_path, monkeypatch):
+    from scraper.geography import crosswalk as cw
+
+    monkeypatch.setattr(cw, "MANUAL_CSV", tmp_path / "cwm.csv")
+    xw = Crosswalk(built.settlements, built.districts, config)
+    # near-miss spelling of "Miskolc"
+    r = xw.match("Miskolcz", kind="name", source_id="test")
+    assert r.status == "pending"
+    assert r.method in {"fuzzy", "none"}
+    assert (tmp_path / "cwm.csv").exists()
+
+
+def test_crosswalk_match_frame_keeps_unmatched_rows(built, config, tmp_path, monkeypatch):
+    from scraper.geography import crosswalk as cw
+
+    monkeypatch.setattr(cw, "MANUAL_CSV", tmp_path / "cwm2.csv")
+    xw = Crosswalk(built.settlements, built.districts, config)
+    df = pd.DataFrame({"name": ["Encs", "Ismeretlen Hely"]})
+    out = xw.match_frame(df, column="name", kind="name", source_id="okfo")
+    assert len(out) == 2  # nothing dropped
+    assert out.loc[0, "district_id"] == "0512"
+    assert pd.isna(out.loc[1, "district_id"])
+    assert set(out["crosswalk_status"]) <= {"confirmed", "pending"}
+
+
+# --------------------------------------------------------------------------- #
+# harmonise
+# --------------------------------------------------------------------------- #
+
+
+def test_apportion_intensive_numerator_denominator_split():
+    num = {"S1": 20.0}
+    den = {"S1": 100.0}
+    pop = {"s1": 40.0, "s2": 60.0}
+    src = {"s1": "S1", "s2": "S1"}
+    tgt = {"s1": "T1", "s2": "T2"}
+    out = apportion_intensive(num, den, pop, src, tgt, variable="rate")
+    # rate preserved at 0.2 in both targets (uniform split of num and den)
+    assert out["T1"] == pytest.approx(0.2)
+    assert out["T2"] == pytest.approx(0.2)
+
+
+def test_harmonise_frame_extensive_and_intensive():
+    src_frame = pd.DataFrame({"unit_id": ["S1", "S2"], "cases": [100.0, 40.0], "rate": [0.1, 0.2]})
+    pop = {"a": 30.0, "b": 70.0, "c": 40.0}
+    src = {"a": "S1", "b": "S1", "c": "S2"}
+    tgt = {"a": "T1", "b": "T2", "c": "T2"}
+    hlog = HarmonisationLog()
+    out = harmonise_frame(
+        src_frame,
+        value_columns=["cases", "rate"],
+        extensive_flags={"cases": True, "rate": False},
+        settlement_pop=pop,
+        settlement_source=src,
+        settlement_target=tgt,
+        hlog=hlog,
+    )
+    assert set(out["unit_id"]) == {"T1", "T2"}
+    assert out.set_index("unit_id").loc["T1", "cases"] == pytest.approx(30.0)
+    assert out["cases"].sum() == pytest.approx(140.0)
+    assert len(hlog.entries) > 0
+
+
+def test_harmonisation_log_flush(tmp_path):
+    hlog = HarmonisationLog()
+    hlog.add("x", "test_method", detail=1)
+    p = hlog.flush(tmp_path / "hlog.json")
+    assert p.exists()
+    import json
+
+    assert json.loads(p.read_text())["entries"][0]["variable"] == "x"
+
+
+# --------------------------------------------------------------------------- #
+# build_registry parsing + writing
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_canonical_csv_zero_pads(tmp_path):
+    p = tmp_path / "registry_2020.csv"
+    p.write_text(
+        "settlement_id,settlement_name,district_id,county_id\n"
+        "5,Egy,101,1\n"
+        "12345,Ketto,0511,05\n",
+        encoding="utf-8",
+    )
+    df = parse_canonical_csv(p)
+    assert list(df["settlement_id"]) == ["00005", "12345"]
+
+
+def test_parse_tszj_workbook_heuristic(tmp_path):
+    xlsx = tmp_path / "tszj_2021_megnevezesekkel.xlsx"
+    pd.DataFrame(
+        {
+            "Település törzsszáma": ["10001", "10002"],
+            "Település megnevezése": ["A", "B"],
+            "Járás kódja": ["0101", "0101"],
+            "Megye kódja": ["01", "01"],
+            "Megye megnevezése": ["Budapest", "Budapest"],
+        }
+    ).to_excel(xlsx, index=False)
+    out = parse_tszj_workbook(xlsx)
+    assert list(out["settlement_id"]) == ["10001", "10002"]
+    assert set(out["district_id"]) == {"0101"}
+
+
+def test_write_registry_emits_parquets(built, tmp_path, monkeypatch):
+    from scraper.geography import build_registry as br
+
+    monkeypatch.setattr(br, "DISTRICTS_OUT", tmp_path / "d.parquet")
+    monkeypatch.setattr(br, "SETTLEMENTS_OUT", tmp_path / "s.parquet")
+    monkeypatch.setattr(br, "BOUNDARY_CHANGES_OUT", tmp_path / "bc.json")
+    write_registry(built)
+    assert (tmp_path / "d.parquet").exists()
+    assert (tmp_path / "s.parquet").exists()
+    assert (tmp_path / "bc.json").exists()
+
+
+def test_check_consistency_flags_orphan_settlement():
+    frame = pd.DataFrame(
+        {
+            "settlement_id": ["10001", "10002"],
+            "settlement_name": ["A", "B"],
+            "district_id": ["0101", ""],
+            "county_id": ["01", "01"],
+            "postal_codes": ["", ""],
+        }
+    )
+    errs = check_consistency(frame, county_count_expected=1)
+    assert any("no district_id" in e for e in errs)

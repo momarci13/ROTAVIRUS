@@ -211,6 +211,8 @@ def run_scenario(
             "need_score": need_frame["need_score"].to_numpy(),
         }
     )
+    if "county_id" in panel.columns:
+        out.insert(1, "county_id", panel["county_id"].to_numpy())
     log.info(
         "scenario.run",
         scenario=scenario_id,

@@ -1,0 +1,62 @@
+{
+  "updated_at": "2026-08-28T18:13:34.637579+00:00",
+  "columns": [
+    {
+      "name": "geo_level",
+      "dtype": "object"
+    },
+    {
+      "name": "geo_name",
+      "dtype": "object"
+    },
+    {
+      "name": "variable",
+      "dtype": "object"
+    },
+    {
+      "name": "value",
+      "dtype": "int64"
+    },
+    {
+      "name": "iso_year",
+      "dtype": "int64"
+    },
+    {
+      "name": "iso_week",
+      "dtype": "float64"
+    },
+    {
+      "name": "period_start",
+      "dtype": "object"
+    },
+    {
+      "name": "period_end",
+      "dtype": "object"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "collector",
+      "dtype": "object"
+    },
+    {
+      "name": "quality_flag",
+      "dtype": "object"
+    },
+    {
+      "name": "county_id",
+      "dtype": "object"
+    }
+  ],
+  "hash": "92115a7ebb9676e65d29a11800a95bd9a255ceba43af15c563844e84b57affa3"
+}
