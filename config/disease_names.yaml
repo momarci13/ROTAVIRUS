@@ -64,6 +64,21 @@ county_table_rows:
   - "Zala"
 
 county_name_aliases:
+  # renames
   "Csongrád": "Csongrád-Csanád"          # renamed 2020
   "Budapest főváros": "Budapest"
   "Bács-Kiskun megye": "Bács-Kiskun"
+  # abbreviated forms used in the NNGYK weekly territorial table (page 3)
+  "Bács": "Bács-Kiskun"
+  "Borsod": "Borsod-Abaúj-Zemplén"
+  "Győr": "Győr-Moson-Sopron"
+  "Hajdú": "Hajdú-Bihar"
+  "Jász": "Jász-Nagykun-Szolnok"
+  "Komárom": "Komárom-Esztergom"
+  "Szabolcs": "Szabolcs-Szatmár-Bereg"
+  "Csongrád-Csanád": "Csongrád-Csanád"
+  "B.-A.-Z.": "Borsod-Abaúj-Zemplén"
+  "Sz.-Sz.-B.": "Szabolcs-Szatmár-Bereg"
+  "J.-N.-Sz.": "Jász-Nagykun-Szolnok"
+  "K.-E.": "Komárom-Esztergom"
+  "G.-M.-S.": "Győr-Moson-Sopron"

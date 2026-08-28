@@ -42,6 +42,8 @@ class Resource:
     week: int | None = None
     render_required: bool = False
     manual: bool = False
+    #: fallback URLs tried on 404 before the resource is declared broken
+    alt_urls: list[str] = field(default_factory=list)
     meta: dict[str, Any] = field(default_factory=dict)
 
     def target_name(self) -> str:
@@ -130,6 +132,14 @@ class Collector(ABC):
         return self.config.sources.get(self.source_config_key)
 
     @property
+    def http_client(self) -> HTTPClient:
+        """The HTTP client, guaranteed non-None (raises otherwise). Use in
+        discover()/fetch() paths that genuinely need the network."""
+        if self.http is None:
+            raise CollectorError(f"{self.name}: an HTTP client is required for this operation")
+        return self.http
+
+    @property
     def raw_dir(self) -> Path:
         d = RAW_DIR / self.name
         d.mkdir(parents=True, exist_ok=True)
@@ -186,16 +196,28 @@ class Collector(ABC):
                 self.report.resource_hashes.append({"url": resource.url, "sha256": digest})
                 return dest
 
-        try:
-            res = self.http.download_to(resource.url, dest, rate_limit=self.rate_limit())
-        except BrokenLinkError:
+        urls_to_try = [resource.url, *resource.alt_urls]
+        res = None
+        used_url = resource.url
+        for i, url in enumerate(urls_to_try):
+            try:
+                res = self.http.download_to(url, dest, rate_limit=self.rate_limit())
+                used_url = url
+                break
+            except BrokenLinkError:
+                if i + 1 < len(urls_to_try):
+                    self.log.info("fetch.alt_url", resource=resource.key, tried=url)
+                    continue
+                self.report.broken_links.append(url if not resource.alt_urls else resource.url)
+                return None
+        if res is None:  # pragma: no cover - defensive
             self.report.broken_links.append(resource.url)
             return None
 
         digest = sha256_bytes(res.content)
         self.registry.add(
             RegistryRecord(
-                url=resource.url,
+                url=used_url,
                 local_path=str(dest),
                 sha256=digest,
                 bytes=len(res.content),

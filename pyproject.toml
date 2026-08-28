@@ -38,12 +38,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# PDF table extraction. camelot-py needs Ghostscript on PATH; on Windows install
-# Ghostscript separately (see README). pdfplumber alone is pure-Python and is the
-# fallback strategy.
+# PDF table extraction. camelot's lattice flavour needs Ghostscript on PATH;
+# on Windows install Ghostscript separately (see README). pdfplumber alone is
+# pure-Python and is the guaranteed fallback strategy.
 pdf = [
     "pdfplumber>=0.11",
-    "camelot-py[cv]>=0.11",
+    "camelot-py>=0.11",
+    "opencv-python-headless>=4.8",
 ]
 # Spatial stack. Heavy wheels; on Windows prefer conda-forge or pipwin if pip fails.
 spatial = [
@@ -96,6 +97,9 @@ ignore = [
     "E501",   # long lines tolerated in config-ish literals
     "B905",   # zip strict= not always available intent
     "N818",   # domain exception names read better without an "Error" suffix
+    "RUF001", # we deliberately match en-dash / other Unicode punctuation variants
+    "RUF002",
+    "RUF003",
 ]
 
 [tool.ruff.lint.per-file-ignores]

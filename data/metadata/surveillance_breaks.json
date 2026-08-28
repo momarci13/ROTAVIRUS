@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "breaks": [
+    {
+      "variable": "rotavirus_cases",
+      "break_date": "2014-01-01",
+      "kind": "category_split",
+      "description": "Rotavírus-gastroenteritis became a standalone notifiable category. Before this, diarrhoeal disease was reported under the 'Enteritis infectiosa' umbrella and is not comparable.",
+      "legal_reference": "1/2014. (I. 16.) EMMI rendelet",
+      "legal_url": "https://njt.jog.gov.hu/jogszabaly/2014-1-20-5H"
+    }
+  ]
+}
