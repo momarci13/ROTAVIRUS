@@ -1,0 +1,46 @@
+{
+  "updated_at": "2026-08-28T21:35:29.109117+00:00",
+  "columns": [
+    {
+      "name": "district_id",
+      "dtype": "object"
+    },
+    {
+      "name": "district_name",
+      "dtype": "object"
+    },
+    {
+      "name": "county_id",
+      "dtype": "object"
+    },
+    {
+      "name": "county_name",
+      "dtype": "object"
+    },
+    {
+      "name": "nuts3_code",
+      "dtype": "object"
+    },
+    {
+      "name": "nuts2_code",
+      "dtype": "object"
+    },
+    {
+      "name": "valid_from",
+      "dtype": "object"
+    },
+    {
+      "name": "valid_to",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "is_budapest_district",
+      "dtype": "bool"
+    }
+  ],
+  "hash": "98ad2b593b6dd8cf86b3cadede32e8956c8d8a731dd8b9923267fd8f91511608"
+}

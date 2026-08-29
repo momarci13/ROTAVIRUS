@@ -1,0 +1,41 @@
+# Az elemzés futtatási paraméterei. Mindent innen olvas a Python- és az R-pipeline.
+
+cross_section_year: 2024          # elsődleges keresztmetszet (51 hét, teljes vármegyei fedettség)
+pre_covid_year: 2019             # összehasonlító év
+trend_years: [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
+partial_years: [2017, 2026]       # nem teljes év – jelölve az ábrákon
+
+budget_huf: 2500000000           # a normált forgatókönyvek kerete (config/scenarios.yaml)
+burden_ci_halfwidth: 0.50        # ±50% hitelességi sáv a modellezett járási esetszámra
+need_top_share: 0.20             # "prioritási" halmaz = legrosszabb kvintilis
+need_top_decile: 0.10            # "felső decilis" a robusztusság-vizsgálathoz
+
+allocation_eta: 0.5              # 5. forgatókönyv szükségleti rugalmassága
+allocation_kappa: 0.0            # fiskális büntetés – nincs járási fiskális adat, 0
+
+# A szükségletarányos oltástámogatás megtérülési (break-even) elemzéséhez:
+# feltételezett átoltottság-növekmény egy teljes körű támogatás mellett.
+subsidy_uptake_gain: 0.60
+
+# A 2024-es árszintű napi bruttó bér 2025-re hozásának nominális szorzója.
+# Explicit feltevés: a KSH szerint a bruttó átlagkereset 2025-ben ~9%-kal nőtt.
+# (Az automatikusan begyűjtött KSH ár-index parquet többsoros, kézi ellenőrzést
+#  igényel – lásd a dolgozat Korlátok fejezetét –, ezért nem abból deflálunk.)
+wage_growth_2024_2025: 1.09
+
+sensitivity:
+  one_way_deltas: [0.10, 0.25, 0.50]
+  psa_draws: 2000
+  weight_draws: 2000
+  dirichlet_concentration: 20
+  robust_threshold: 0.80         # P(felső decilis) küszöb a robusztus halmazhoz
+  seed: 20260101
+
+paths:
+  processed: "../../data/processed"
+  intermediate: "../../data/intermediate"
+  metadata: "../../data/metadata"
+  results: "../results"
+  figures: "../paper/figures"
+  tables: "../paper/tables"
+  geo_geojson: "../../data/raw/geo/osm_districts.geojson"

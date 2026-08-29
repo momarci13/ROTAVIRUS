@@ -1,0 +1,850 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[magyar]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{csquotes}
+\usepackage{enumitem}
+
+\graphicspath{{figures/}}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{0pt}
+\frenchspacing
+\emergencystretch=4em
+\hbadness=9999
+\tolerance=2000
+
+% plain-language takeaway paragraph (package-free, visually indented + italic)
+\newcommand{\gyakorlat}[1]{%
+  \par\smallskip
+  {\leftskip=1.2em\rightskip=1.2em\small
+   \textbf{\itshape Mit jelent ez a gyakorlatban.\ }\itshape #1\par}%
+  \smallskip}
+
+% generált számmakrók a run_analysis.py-ból (analysis/paper/tables/_numbers.tex)
+\input{tables/_numbers.tex}
+
+\title{\textbf{Ugyanaz a betegség, más esély:\\
+területi egyenlőtlenségek a gyermekkori rotavírus-betegségteherben\\
+és egy szükségletalapú járási támogatásallokációs keret Magyarországon\\ (2017--2026)}}
+\author{Corvinus Egyetem --- Tudományos Diákköri Konferencia}
+\date{2026}
+
+\begin{document}
+\maketitle
+
+% ======================================================================
+\section*{Vezetői összefoglaló}
+\addcontentsline{toc}{section}{Vezetői összefoglaló}
+% ======================================================================
+
+\noindent
+Magyarországon egy kisgyermek átlagosan négyéves koráig szinte biztosan
+átesik legalább egy rotavírus okozta hasmenésen. A betegség sok esetben
+kórházi folyadékpótlást igényel, és több napra munkaképtelenné teszi a
+szülőt is. Két hatásos oltás régóta elérhető, de Magyarországon ezeket a
+család fizeti: a teljes sorozat több tízezer forint. Néhány önkormányzat
+ad hozzá támogatást, országos rendszer nincs.
+
+Dolgozatunk azt kérdezi: \emph{hol csap le a betegség a legnagyobb erővel,
+és egybeesik-e ez azzal, ahol a családok a legkevésbé tudják megfizetni a
+megelőzést?} Egy nyílt, végponttól végpontig újrafuttatható adat-elemzési
+rendszert építettünk, amely hivatalos forrásokból (NNGYK-járványügyi
+jelentések, KSH-népesség és -árindexek, NFSZ-munkaerőpiac, OKFŐ-alapellátás,
+a 290/2014.\ kormányrendelet fejlettségi besorolása) állítja elő a
+\nDistricts{} magyar járás betegségteher-, szükséglet- és
+támogatás-becsléseit.
+
+\medskip
+\noindent\textbf{A négy legfontosabb megállapítás:}
+\begin{enumerate}[nosep,leftmargin=1.4em]
+\item \textbf{Az egyenlőtlenség tartós.} A vármegyék közötti eset-ráta
+Gini-együtthatója \csYear-ben \giniXs{}; a legmagasabb és legalacsonyabb
+vármegyei ráta között \maxminXs-szeres a különbség. A 2017--2026 közötti
+trend statisztikailag \emph{nem} csökkenő ($p=\giniTrendP$).
+\item \textbf{A hátrányok halmozódnak.} A magas betegségteher, a
+munkaerőpiaci depriváltság és a hiányzó házi gyermekorvos földrajzilag
+ugyanazokban a járásokban jelentkezik --- főként Borsod-Abaúj-Zemplén és
+Somogy leszakadó járásaiban. \nSpecRobust{} járás az \emph{összes} általunk
+kipróbált számítási módszer mellett a legrosszabb 10\%-ban marad.
+\item \textbf{A jelenlegi támogatás rossz helyre jut.} Azonosítható
+önkormányzati rotavírus-oltástámogatás mindössze \nDistrictsMuni{} járásban
+van --- mindkettő jómódú budapesti kerület.
+\item \textbf{A szükségletarányos célzás kifizetődő.} A legmagasabb
+szükségletű járásokban egy célzott oltástámogatás állandósult állapotban
+\emph{több társadalmi költséget takarítana meg, mint amennyibe kerül}
+(haszon/költség arány \ceBcrTopNeed).
+\end{enumerate}
+
+\medskip
+\noindent Az eredmények egy országos, szükségletalapú --- küszöbös vagy
+erősen szükségletre súlyozott --- állami megelőzés-támogatási formula mellett
+szólnak.
+
+\begin{abstract}
+\noindent
+A rotavírus okozta gastroenteritis a védőoltás előtti időszakban az 5 év
+alatti gyermekek egyik vezető fertőző kórházi felvételi oka volt
+Magyarországon. A rotavírus elleni oltás nem része a kötelező oltási
+rendnek, így a hozzáférést a szülői fizetőképesség és az önkormányzati
+döntések alakítják. Egy reprodukálható, nyílt adat-pipeline kimeneteire
+építve (i) leírjuk a bejelentett rotavírus-megbetegedések vármegyék közötti
+egyenlőtlenségét 2017 és 2026 között, formális trendteszttel; (ii) járási
+felbontású modellezett betegségteher-becslést, a KSH vármegyei
+gyermeknépességére vetítve, munkaerőpiaci és alapellátási kapacitás-mutatóval
+kombinálva összetett szükségletindexet (Mazziotta--Pareto) építünk a
+\nDistricts{} járásra, és külső érvényességét a 290/2014.\ Korm.\ rendelet
+hivatalos fejlettségi mutatójához mérjük; (iii) nyolc elosztási
+forgatókönyvben ugyanazt a \budgetHuf{}~Ft-os keretet allokáljuk, és
+méltányossági (koncentrációs index bootstrap-konfidenciaintervallummal,
+Kakwani-index, Theil-dekompozíció), teljes érzékenységi (egyváltozós,
+kétváltozós, valószínűségi, Dirichlet-súlyújramintavétel) és megtérülési
+(break-even) elemzést végzünk. Fő eredmények: a vármegyei eset-ráta
+egyenlőtlensége tartós (\csYear: Gini $=\giniXs$ [\giniXsLo; \giniXsHi]),
+a 8 éves trend meredeksége nem különbözik szignifikánsan nullától
+($p=\giniTrendP$), és a betegségteher pozitívan együtt mozog a munkaerőpiaci
+depriváltsággal (Pearson $r=\countyBurdenSocioPearson$). A szükségletindex
+erősen korrelál a hivatalos fejlettségi mutatóval (Spearman
+$\needVsOfficialSpearman$), és \nSpecRobust{} járás minden specifikációban a
+felső decilisben marad. A nyolc elosztási elv járási allokációja élesen
+eltér; a folytonos szükségletalapú szabályok koncentrációs indexe a
+bootstrap-konfidenciaintervallum teljes hosszában pozitív
+($\ciEpiLo$--$\ciFullHi$), a fejkvóta és a status quo regresszív. A
+szükségletarányos célzás állandósult állapotú megtérülési aránya a
+legmagasabb szükségletű kvintilisben \ceBcrTopNeed. A jelenlegi
+önkormányzati rotavírus-oltástámogatás \nDistrictsMuni{} járásban létezik
+(mindkettő alacsony szükségletű budapesti kerület).
+
+\smallskip
+\noindent\textbf{Kulcsszavak:} rotavírus, betegségteher, területi
+egyenlőtlenség, szükségletalapú forráselosztás, méltányosság, kis területi
+becslés, költséghatékonyság
+\end{abstract}
+
+\tableofcontents
+
+% ======================================================================
+\section{Bevezetés}
+% ======================================================================
+
+Képzeljünk el két másfél éves kisgyereket. Az egyik egy borsodi kistelepülésen
+él, egy tartósan betöltetlen házi gyermekorvosi körzetben, ahol a szülők
+egyike regisztrált álláskereső. A másik egy budapesti belvárosi kerületben,
+ahol a legközelebbi gyermekorvos néhány percre van, és az önkormányzat
+gyermekenként támogatja a rotavírus elleni oltást. Ugyanaz a vírus, ugyanaz
+a téli szezon --- de a betegség valószínűsége, a szövődmény esélye és a
+megelőzés megfizethetősége között szakadék tátong. Ez a dolgozat ezt a
+szakadékot méri fel, és megvizsgálja, hogyan zárná be egy szükségletalapú
+állami támogatás.
+
+A rotavírus a súlyos gyermekkori gastroenteritis leggyakoribb kórokozója; a
+védőoltás előtti időszakban Európában az 5 év alatti korosztályban gyakorlatilag
+minden gyermek átesett legalább egy fertőzésen, és a betegség a korcsoport
+fertőző eredetű kórházi felvételeinek jelentős részéért felelt
+\citep{soriano2006,who2021rota}. Két nagy hatásosságú, orális oltóanyag
+(egy monovalens és egy pentavalens) 2006 óta elérhető, és a súlyos
+rotavírus-gastroenteritist ${\sim}85$--90\%-ban megelőzi
+\citep{vesikari2006,ruizpalacios2006,who2021rota}.
+
+Magyarországon a rotavírus elleni oltás \emph{ajánlott, de nem kötelező}, és
+nem finanszírozza a társadalombiztosítás: a teljes sorozat piaci ára a
+családot terheli. Néhány önkormányzat helyi rendeletben nyújt részleges
+támogatást, de országosan egységes megelőzési finanszírozás nincs. A
+kontrasztot élesen mutatja egy másik, régen szintén önköltséges oltás: a
+bárányhimlő elleni védőoltás 2019-től bekerült a kötelező oltási rendbe, és
+a bejelentett bárányhimlős esetek száma azóta a töredékére esett
+(\variAnnPre{}$\to$\variAnnXs). A rotavírus, változatlan finanszírozási
+státusszal, a COVID utáni visszaesésből visszapattant a járvány előtti
+szintre (\rotaAnnPre{}$\to$\rotaAnnXs; \ref{fig:context}.~ábra).
+
+Ez a berendezkedés két, egymást erősítő egyenlőtlenséget hoz létre. Egyrészt
+a \emph{betegségteher} földrajzilag egyenetlen. Másrészt a \emph{megelőzési
+kapacitás} is: ahol a szülői jövedelem alacsony és az önkormányzat nem tud
+támogatást adni, ott a legkisebb az oltási lefedettség --- és gyakran éppen
+ezekben a járásokban a legrosszabb a házi gyermekorvosi alapellátás
+lefedettsége is.
+
+\paragraph{A dolgozat központi kérdése.}
+\emph{Hogyan lehetne az állami támogatást a járások között a tényleges
+szükséglet arányában elosztani, és a különböző elosztási elvek mennyire
+méltányos, progresszív és robusztus eredményre vezetnek?} A kérdés a
+kapacitáció- és kockázatkiigazítás-alapú forráselosztás szakirodalmához
+kapcsolódik \citep{rice2001}, a hozzáférés több\-dimenziós fogalmához
+\citep{penchansky1981}, valamint az egészség-egyenlőtlenségek mérésének
+módszertanához \citep{wagstaff1991,odonnell2008,kakwani1977}.
+
+\paragraph{Hozzájárulás.}
+(1) Az első \emph{reprodukálható, járási felbontású} adat- és elemzési keret a
+magyar gyermekkori rotavírus-betegségteher és a hozzá rendelhető állami
+támogatás vizsgálatára, a megfigyelt / becsült / feltételezett adatok
+explicit szétválasztásával. (2) A betegségteher, a szocioökonómiai
+depriváltság és az alapellátási kapacitáshiány \emph{együttes}, nem
+kompenzáló szükségletként való kezelése, \emph{külső érvényességi próbával} a
+290/2014.\ Korm.\ rendelet hivatalos fejlettségi mutatójához mérve. (3) Nyolc
+elosztási elv egységes összehasonlítása méltányossági mérőszámokkal,
+bootstrap-konfidenciaintervallummal és háromféle érzékenységvizsgálattal.
+(4) A jelenlegi önkormányzati finanszírozási minta és a modellezett
+szükséglet viszonyának kvantifikálása, valamint egy szükségletarányos
+oltástámogatás járásszintű \emph{megtérülési} elemzése.
+
+\paragraph{Kutatási kérdések és hipotézisek.}
+\textbf{K1.} Csökkent-e 2017--2026 között a bejelentett rotavírus vármegyék
+közötti egyenlőtlensége? \emph{H1: nem; a COVID-időszak átmeneti
+szintcsökkenést, de nem konvergenciát hozott.}
+\textbf{K2.} A járási betegségteher együtt mozog-e a szocioökonómiai
+depriváltsággal és a kapacitáshiánnyal? \emph{H2: igen (halmozott hátrány).}
+\textbf{K3--K4.} Melyik elosztási elv a legprogresszívebb a szükséglethez
+képest? \emph{H3: az epidemiológiai és a teljes szükségletalapú célzás
+lényegesen progresszívebb, mint a fejkvóta vagy a status quo.}
+\textbf{K5.} Mennyire robusztus a szükségletalapú allokáció a súly- és
+költségfeltevésekre? \emph{H4: a prioritási járások halmaza stabil.}
+\textbf{K6.} Mennyire igazodik a jelenlegi önkormányzati támogatás a
+modellezett szükséglethez? \emph{H5: elenyésző a lefedettség és nincs érdemi
+korreláció.}
+
+% ======================================================================
+\section{Szakirodalmi háttér}
+% ======================================================================
+
+\paragraph{Rotavírus-betegségteher és megelőzés.}
+Az európai betegségteher-becslések szerint a rotavírus a súlyos gyermekkori
+akut gastroenteritis mintegy felét okozza, kifejezett téli-kora tavaszi
+szezonalitással \citep{soriano2006,ecdc_rota}. Az oltás populációszintű
+bevezetése több országban 60--90\%-os csökkenést hozott a
+rotavírus-specifikus kórházi felvételekben \citep{who2021rota}. Ahol az oltás
+nem támogatott, ott a lefedettség jellemzően alacsony és társadalmi-gazdasági
+gradienst követ.
+
+\paragraph{Szükségletalapú forráselosztás.}
+Az egészségügyi kapacitációs formulák a demográfiai összetétel mellett
+\emph{kiegészítő szükségleti} tényezőket (deprivációs indexek, morbiditási
+proxy-k, ellátási költségkülönbségek) építenek be, hogy a források a várható
+igénnyel arányosan áramoljanak \citep{rice2001}. A hozzáférés
+\citet{penchansky1981} szerint öt dimenzió együttese --- a tartósan
+betöltetlen gyermekorvosi körzet az \emph{elérhetőség} közvetlen hiánya.
+
+\paragraph{Egyenlőtlenség és progresszivitás mérése.}
+A \emph{koncentrációs index} egy egészségügyi változó társadalmi-gazdasági
+rang szerinti eloszlását méri \citep{wagstaff1991,odonnell2008}; a
+\emph{Kakwani-index} a transzfer progresszivitását a szükséglet eloszlásához
+viszonyítja \citep{kakwani1977}; a \emph{Theil-index} additívan bontható
+csoportközi és csoporton belüli komponensre \citep{theil1967}. Az összetett
+mutatók közül a \emph{Mazziotta--Pareto index} (MPI) nem kompenzáló: bünteti
+a dimenziók közötti horizontális egyenlőtlenséget, így a
+\enquote{halmozottan hátrányos} egységeket kiemeli
+\citep{mazziotta2013,mazziotta2016}. A területi aggregátumon végzett
+elemzést két ismert torzítás terheli: a \emph{módosítható területi egység
+problémája} \citep{openshaw1984} és az \emph{ökológiai következtetés}
+kockázata \citep{robinson1950}; ezekre a Korlátok fejezetben visszatérünk.
+
+% ======================================================================
+\section{Adatok}
+% ======================================================================
+
+Minden adat egy nyílt, verziókövetett adat-pipeline (\texttt{ROTAVIRUS})
+kimenete; a nyers forrásokat a \ref{tab:sources}.~táblázat foglalja össze
+\citep{nngyk_epinfo,nngyk_osap,nfsz_stat,okfo_korzet,ksh_stadat,ksh_nepszamlalas}.
+A pipeline két abszolút szabályt tart be. \textbf{(1)} A rotavírus-esetszám
+legfinomabb \emph{megfigyelt} felbontása a vármegye (heti, a rotavírus önálló
+kategóriaként 2014-től, 1/2014.~EMMI~r.\ \citep{emmi12014}); minden járási
+esetszám \emph{modellezett} (kötelező alsó/felső hitelességi sávval),
+\texttt{evidence\_class = estimated}, \texttt{confidence = low}. \textbf{(2)}
+Minden numerikus mező mellé bizonyíték-osztály kerül; minden
+\texttt{assumed}/\texttt{estimated} érték forrásmegjelöléssel és
+megbízhatósági szinttel szerepel.
+
+\input{tables/t1_sources.tex}
+
+\paragraph{Fedettség és kulcsválasztások.}
+A rotavírus-surveillance 2017-től áll rendelkezésre teljes vármegyei
+bontásban ($n=\nWeeksTotal$ heti megfigyelés, 20 vármegye); a 2014--2015-ös
+heti PDF-ekből a táblázatkinyerés több héten nem sikerült. Elsődleges
+keresztmetszeti év a \csYear{} (51 hét, teljes fedettség), pre-COVID
+összehasonlító a \preYear{}. \textbf{Független kereszt-ellenőrzés:} a
+\csYear-es vármegyei esetszámok az NNGYK heti összegeiből
+(\weeklySumTotal{}~eset) és a független OSAP éves jelentésből
+(\osapTotal{}~eset) számítva vármegyénként $r=\osapWeeklyPearson$
+korrelációval egyeznek. A járási munkaerőpiaci adat (NFSZ, havi) és a
+tartósan betöltetlen körzetek (OKFŐ, pillanatképek 2021-től) településről
+járásra aggregálva; a településnév-illesztés fedettsége $\nfsMatchRate\,\%$.
+A legfrissebb OKFŐ-pillanatkép (\okfoSnapshot) $\okfoVacantPaed{}$ tartósan
+betöltetlen házi(gyermek)orvosi körzetet tartalmaz,
+$\okfoDistrictsWithVacant{}$ járásban.
+
+\paragraph{Az elemzési réteg és a lezárt adathiányok.}
+A dolgozat korábbi változatához képest három korlátozást oldottunk fel valós
+adattal. \textbf{(a) Gyermeknépesség.} A betegségteher nevezője már nem a
+munkavállalási korú népesség, hanem a KSH vármegyei 0--14 éves népessége
+(STADAT 22.1.2.2), a járásra a munkavállalási korú népesség aránya szerint
+szétosztva. \textbf{(b) Jogszabályi jogosultság.} A jogszabályi
+küszöb-forgatókönyv már a 290/2014.~Korm.~r.\ \citep{korm2902014}
+\emph{tényleges} 3.~melléklete szerinti \nEligibleProxy{} kedvezményezett
+járást használja (proxy helyett), és a rendelet 2.~melléklete adja a
+hivatalos komplex fejlettségi mutatót minden járásra --- ez a szükségletindex
+\emph{külső érvényességi} mércéje. \textbf{(c) Deflátor.} A KSH ágazati
+(egészségügyi) fogyasztóiár-indexét láncoltuk 2025-ös bázisra
+(2024$\to$2025 tényező \deflMed); a bér/termelékenységi tag továbbra is az
+explicit, dokumentált \earningsDefl-es nominális kereset-növekedési szorzót
+használja.
+
+% ======================================================================
+\section{Módszertan}
+% ======================================================================
+
+\subsection{Járási betegségteher-becslés}
+A vármegyei éves esetszámot ($\mathrm{cases}_{c,y}$) populációsúlyozott
+szétosztással bontjuk járásra, és $\pm 50\%$ hitelességi sávval látjuk el:
+\begin{equation}
+\lambda_i = \mathrm{cases}_{c(i),y}\cdot
+  \frac{p_i}{\sum_{j\in c(i)} p_j},\qquad
+\mathrm{CI}_i = [\,0{,}5\,\lambda_i;\ 1{,}5\,\lambda_i\,],
+\end{equation}
+ahol $p_i$ a járás munkavállalási korú népessége (a vármegyén belüli
+korszerkezet homogenitását feltételezve). A relatív betegségteher
+$\mathrm{burden\_rate}_i = \lambda_i / p^{\text{gy}}_i \cdot 10^5$, ahol
+$p^{\text{gy}}_i$ a járásra arányosított KSH 0--14 éves gyermeknépesség; a
+mérőszám tehát \emph{eset / \rateDenom{}}.
+
+\subsection{Költségmodell}
+Egy bejelentett esetre jutó várható költség (2025-ös árszint):
+\begin{align}
+c_{\text{fekvő}} &= \text{alapdíj}\cdot w_{\text{HBCs}}, &
+c_{\text{járó}} &= v_{\text{pont}}\cdot q_{\text{pont}} + c_{\text{HO}},\\
+c_{\text{direkt}} &= h\, c_{\text{fekvő}} + (1-h)\, c_{\text{járó}}, &
+\text{ProdLoss} &= \pi\cdot \min(d, D)\cdot w_{\text{nap}}\cdot(1+\tau),\\
+c_{\text{eset}} &= c_{\text{direkt}} + \text{ProdLoss}, &
+\widehat C_i &= \lambda_i\cdot c_{\text{eset}}.
+\end{align}
+Minden paraméterhez alap / alsó / felső érték tartozik
+(\ref{tab:cost}.~táblázat), forrásmegjelöléssel. Ezek az \emph{elemzési
+réteg} átlátható feltevései: a pipeline magmodulja hiányzó kötelező paraméter
+esetén leáll, nem helyettesít default számot.
+
+\input{tables/t2_cost_parameters.tex}
+
+\subsection{Összetett szükségletindex}
+Három, az elérhető adatokból számítható dimenzió: betegség
+($\mathrm{burden\_rate}$, súly 0{,}412), szocioökonómiai (álláskeresői ráta,
+0{,}353), alapellátási kapacitás (tartósan betöltetlen gyermekorvosi körzet /
+100\,000 fő, 0{,}235). A súlyok az eredeti négydimenziós definíció (0{,}35 /
+0{,}30 / 0{,}20) arányos újranormálásai, a nem elérhető fiskális dimenzió
+elhagyásával. A dimenziókat $z$-score-ral standardizáljuk, majd
+Mazziotta--Pareto indexszel aggregáljuk (nem kompenzáló, negatív
+büntetőtaggal). Robusztussági változatként (i) súlyozott átlagot és
+rang-alapú aggregálást is számolunk (Spearman
+$\rho=\needMpiWsumSpearman$ az MPI és a súlyozott átlag között), és
+(ii) az álláskeresői rátát a 290/2014 hivatalos fejlettségi mutatójával
+kicserélve újraépítjük az indexet (a két rangsor Spearman-korrelációja
+$\needSwapSpearman$).
+
+\subsection{Elosztási forgatókönyvek}
+Egyetlen generikus allokációs függvény nyolc paraméterezése; a normált
+forgatókönyvek kerete $B = \budgetHuf$~Ft, év = \csYear. A 0.~(status quo) a
+meglévő önkormányzati támogatás; 1.~egyenlő fejkvóta ($\propto p_i$);
+2.~epidemiológiai ($\propto \lambda_i$); 3.~szocioökonómiai
+($\propto p_i\, S_i$); 4.~kapacitásalapú ($\propto p_i\, H_i$); 5.~teljes
+szükségletalapú ($\propto \widehat C_i\,(1+\eta\,\tilde N_i)$, $\eta=0{,}5$);
+6.~költségrés ($\max(0,\widehat C_i - L_i)$, nem normált); 7.~jogszabályi
+küszöb (csak a 290/2014 kedvezményezett járások, azon belül fejkvóta). A
+fiskális kapacitás-büntetőt 0-ra állítjuk (nincs járási fiskális adat).
+
+\subsection{Méltányosság, érzékenység és külső érvényesség}
+Forgatókönyvenként: az allokáció Gini-együtthatója; a \emph{koncentrációs
+index} a szükséglet-rang, illetve a szocioökonómiai rang szerint (pozitív $=$
+progresszív); a \emph{Kakwani-index} $= \mathrm{CI}(\text{támogatás}) -
+\mathrm{Gini}(\text{szükséglet})$; a \emph{Theil-dekompozíció}
+vármegyeközi/vármegyén belüli komponense; a keret hányada a legrosszabb
+szükségleti kvintilisnek; a normált forgatókönyvek közötti
+Spearman-rangkorreláció és a felső-20 járás Jaccard-átfedése. A
+progresszivitási mérőszámokhoz \textbf{95\%-os bootstrap
+konfidenciaintervallumot} közlünk (2000 járás-újramintavétel).
+
+Az érzékenységet négy módon vizsgáljuk. \emph{(i) Egyváltozós (tornádó):} a
+teljes társadalmi várható költség az egyes költségtényezők alsó/felső értéke
+mellett. \emph{(ii) Kétváltozós:} a szükségleti rugalmasság ($\eta$) és az
+aluljelentési szorzó együttes rácsa a koncentrációs indexre és az
+újraosztott keret arányára. \emph{(iii) Valószínűségi (PSA), \psaDraws{}
+húzás:} gamma a költség-, béta az arányparaméterekre, lognormális a
+betegségteher-szorzóra és járásonként külön zajra; a teljes költség és a
+progresszivitás eloszlása. \emph{(iv) Dirichlet-súlyújramintavétel, \wDraws{}
+húzás} (koncentráció $=20$): járásonként a P(felső decilis a szükségletben),
+és a \emph{robusztus prioritási halmaz} (P $\ge \robustThreshold\,\%$).
+Emellett \emph{specifikáció-robusztusságot} is számolunk: hány elemzési
+specifikációban (3 aggregálás + 3 dimenzió-elhagyás + a hivatalos mutatóval
+való csere, összesen \nSpecs) marad a járás a felső decilisben. A
+konvergenciát a \csYear-ig tartó teljes évek Gini-értékeire illesztett
+lineáris trenddel teszteljük. Minden Monte-Carlo lépés magja \seed.
+
+\subsection{Megtérülési (break-even) elemzés}
+Egy szükségletarányos oltástámogatás állandósult állapotú éves mérlegét
+számoljuk járásonként: a \emph{támogatás} költsége a születési kohorszra
+($p^{\text{gy}}_i/15$) jutó feltételezett \ceUptakeGain\,\%-os
+átoltottság-növekmény és a piaci oltóanyagár szorzata; az \emph{elkerült
+társadalmi költség} a járás teljes társadalmi várható rotavírus-költsége
+szorozva az átoltottság-növekménnyel és az oltóanyag-hatásossággal. A
+haszon/költség arány $>1$ azt jelenti, hogy a támogatás a társadalmi szinten
+megtérül.
+
+% ======================================================================
+\section{Eredmények}
+% ======================================================================
+
+\subsection{Vármegyei betegségteher és annak egyenlőtlensége (K1)}
+
+Az országos heti bejelentett esetszám (\ref{fig:weekly}.~ábra) kifejezett
+téli-kora tavaszi szezonalitást mutat, a 2020--2022-es COVID-időszakban
+markáns visszaeséssel, majd 2024-ben és 2026-ban jelentős újramegugrással.
+Az éves országos idősoron (\ref{fig:context}.~ábra) a rotavírus a
+COVID-visszaesés után visszatért a járvány előtti szintre, miközben a
+2019-től kötelezővé tett bárányhimlő-oltás nyomán a bárányhimlős esetek a
+töredékükre estek --- ugyanabban a KSH-táblában, ugyanabban az időszakban.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{fig1_national_weekly.pdf}
+\caption{A bejelentett rotavírus-gastroenteritis szezonálisan tér vissza, és
+a COVID utáni években a járvány előtti szintre pattant vissza: országos heti
+esetszám, 2017--2026. A szürke sávok a részleges éveket jelölik.}
+\label{fig:weekly}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{fig13_national_context.pdf}
+\caption{Természetes kísérlet egy táblában: a 2019-től kötelező
+bárányhimlő-oltás után a bárányhimlős esetszám összeomlott, a
+finanszírozásában változatlan rotavírusé nem. Országos bejelentett
+esetszám, 2012--2025.}
+\label{fig:context}
+\end{figure}
+
+A vármegyei eset-ráta (eset / \rateDenom) egyenlőtlensége \emph{tartós} és nem
+csökken. Az éves Gini-együttható \csYear-ben \giniXs{} (95\%-os bootstrap
+sáv [\giniXsLo; \giniXsHi]); a \preYear{}--\csYear{} közötti teljes évekre
+illesztett lineáris trend meredeksége \giniTrendSlope{} évente (95\%-os
+konfidenciaintervallum [\giniTrendSlopeLo; \giniTrendSlopeHi],
+$p=\giniTrendP$, $n=\giniTrendNyears$ év) --- azaz \emph{statisztikailag nem
+különbözik a nullától} (\ref{fig:ineq}.~ábra). A keresztmetszeti kép
+(\ref{tab:countyxs}.~táblázat) szerint \csYear-ben a legmagasabb és
+legalacsonyabb vármegyei ráta hányadosa \maxminXs{} volt (\preYear-ben
+\maxminPre).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.92\linewidth]{fig2_county_inequality.pdf}
+\caption{Az egyenlőtlenség nem csökken: a vármegyei rotavírus eset-ráta
+Gini-együtthatója és variációs koefficiense, 2017--2026. Üres jelölő:
+részleges év.}
+\label{fig:ineq}
+\end{figure}
+
+\input{tables/t3_county_xs.tex}
+
+A betegségteher együtt mozog a munkaerőpiaci depriváltsággal: \csYear-ben a
+vármegyei eset-ráta és az álláskeresői ráta Pearson-korrelációja
+$r = \countyBurdenSocioPearson$ ($p = \countyBurdenSocioPearsonP$; Spearman
+$\rho = \countyBurdenSocioSpearman$).
+
+\gyakorlat{Nyolc év adata után nincs jele annak, hogy a szegényebb és a
+gazdagabb vármegyék rotavírus-terhe közeledne egymáshoz. A különbség nem
+zaj: a legrosszabb és a legjobb helyzetű vármegye között \maxminXs-szeres a
+gyermekekre vetített eset-ráta. \textbf{H1 és H2 vármegyei szinten
+megerősítve.}}
+
+\subsection{Járási szükségletindex és külső érvényessége (K2)}
+
+A \nDistricts{} járásra számított összetett szükségletindex
+(\ref{fig:needcomp}.~ábra és \ref{tab:needtop}.~táblázat) a legmagasabb
+értékeket az észak-magyarországi (Borsod-Abaúj-Zemplén: Ózdi, Edelényi,
+Szerencsi, Encsi, Cigándi, Gönci) és a dél-dunántúli (Somogy: Csurgói,
+Barcsi, Tabi) járásokhoz rendeli. Ezekben a járásokban mindhárom
+dimenzió-pontszám pozitív: a halmozott hátrány nem kompenzálódik. A
+betegségteher-ráta járási Gini-je \burdenRateGini, az álláskeresői rátáé
+\jobseekerRateGini.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.9\linewidth]{fig4_need_composition.pdf}
+\caption{A halmozott hátrány térképe: a 30 legmagasabb szükségletindexű
+járás, a három dimenzió súlyozott hozzájárulásával (z-score, a minimumhoz
+eltolva).}
+\label{fig:needcomp}
+\end{figure}
+
+\input{tables/t4_need_top10.tex}
+
+\paragraph{Külső érvényesség.}
+Az összetett szükségletindex erősen korrelál a 290/2014.~Korm.~rendelet
+\emph{független} komplex fejlettségi mutatójával (Spearman
+$\needVsOfficialSpearman$, $p<0{,}001$; Pearson a depriváltsági
+$z$-score-ral $\needVsOfficialPearson$) --- a magas szükségletű járásaink
+túlnyomó része hivatalosan is kedvezményezett járás (\ref{fig:extval}.~ábra).
+Az index tehát nem az általunk választott súlyok műterméke: egy teljesen más
+adatokból, más célra épített kormányzati mutató ugyanazokat a járásokat emeli
+ki.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.62\linewidth]{fig10_external_validation.pdf}
+\caption{Külső érvényesség: az összetett szükségletindex és a 290/2014
+hivatalos fejlettségi mutatója erősen korrelál (Spearman
+$\needVsOfficialSpearman$). Piros: 290/2014 kedvezményezett járás.}
+\label{fig:extval}
+\end{figure}
+
+\gyakorlat{Az általunk épített szükségletindex nem \enquote{tetszőleges
+képlet}: egybevág a hazai területfejlesztési politika hivatalos
+besorolásával. Öt járás (Szerencsi, Edelényi, Ózdi, Csurgói, Barcsi) az
+\emph{összes} kipróbált számítási módszerben a legrosszabb tizedben van
+(\ref{tab:specrobust}.~táblázat).}
+
+\subsection{Költségmodell (K3)}
+
+Az alap-paraméterek mellett egy bejelentett esetre jutó várható költség
+\costPerCase\,Ft (érzékenységi tartomány \costPerCaseLo--\costPerCaseHi\,Ft).
+A \csYear-es bejelentett esetszám alapján a direkt + termelékenységi várható
+éves költség \totalExpectedCost\,Ft; az aluljelentési korrekcióval (alap:
+ötszörös) számított \emph{teljes társadalmi} várható éves költség
+\baseCostMrd~Mrd Ft.
+
+\subsection{Elosztási forgatókönyvek és méltányosság (K3--K4)}
+
+A nyolc elosztási elv járási allokációja élesen eltér
+(\ref{fig:lorenz}.~ábra, \ref{fig:ci}.~ábra, \ref{tab:equity}.~táblázat).
+A szükséglet meredek eloszlásához viszonyítva a \emph{folytonos}
+szükségletalapú szabályok koncentrációs indexe pozitív, és a 95\%-os
+bootstrap konfidenciaintervallum \emph{végig a nulla felett van}:
+2.~epidemiológiai $\ciEpi$ [\ciEpiLo; \ciEpiHi], 5.~teljes szükségletalapú
+$\ciFull$ [\ciFullLo; \ciFullHi], 7.~jogszabályi küszöb $\ciStat$
+[\ciStatLo; \ciStatHi] (\ref{tab:bootstrap}.~táblázat). A
+\emph{Kakwani}-index ugyanakkor mindegyik szükségletalapú szabálynál enyhén
+negatív marad ($\kakEpi$--$\kakStat$): mivel a szükséglet eloszlása maga is
+rendkívül egyenlőtlen, az \emph{arányos} allokáció nem elég progresszív
+hozzá. A fejkvóta ($\ciPc$) és különösen a status quo ($\ciSq$; mindössze
+\statusQuoNonZero{} nem nulla járás) egyértelműen regresszív. A legrosszabb
+szükségleti kvintilis a keret \wqPc\,\%-át kapja a fejkvótával, \wqEpi\,\%-át
+az epidemiológiai, \wqFull\,\%-át a teljes szükségletalapú és \wqStat\,\%-át
+a jogszabályi küszöb-forgatókönyvvel.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.6\linewidth]{fig5_lorenz.pdf}
+\caption{Az allokáció Lorenz-görbéi öt forgatókönyvre (a járásokat az
+allokáció szerint növekvően rendezve).}
+\label{fig:lorenz}
+\end{figure}
+
+\input{tables/t5_equity.tex}
+\input{tables/t10_bootstrap.tex}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.88\linewidth]{fig6_concentration.pdf}
+\caption{A folytonos szükségletalapú szabályok a magasabb szükségletű
+járásokhoz irányítják a keretet: az allokáció koncentrációs indexe a
+szükséglet szerint (pozitív $=$ progresszív).}
+\label{fig:ci}
+\end{figure}
+
+A normált forgatókönyvek járási allokációi részben eltérően rendezik a
+járásokat (\ref{tab:spearman}.~táblázat): az epidemiológiai és a
+szocioökonómiai célzás Spearman-korrelációja $\spearmanEpiSocio$, az
+epidemiológiai és a teljes szükségletalapú felső-20 járás Jaccard-átfedése
+$\jaccardEpiFull$. A Theil-dekompozíció szerint a szükségletalapú
+allokációkban az egyenlőtlenség 40--50\%-a \emph{vármegyék közötti} (a
+fejkvótánál csak \tbPc\,\%, a jogszabályi küszöbnél \tbStat\,\%).
+
+\input{tables/t6_spearman.tex}
+
+\paragraph{Újraelosztási hatás.}
+Az epidemiológiai célzás a fejkvótához képest (\ref{fig:redis}.~ábra) a
+legnagyobb összeget Pest vármegyétől ($-243$~M Ft) és Budapesttől
+($-241$~M Ft) vonja el, és Hajdú-Bihar ($+242$~M Ft), Borsod-Abaúj-Zemplén
+($+204$~M Ft) és Somogy ($+109$~M Ft) felé csoportosítja át.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.72\linewidth]{fig9_redistribution.pdf}
+\caption{Újraelosztási hatás vármegyénként: a 2.~(epidemiológiai) és az
+1.~(fejkvóta) forgatókönyv járási allokációinak vármegyei különbsége.}
+\label{fig:redis}
+\end{figure}
+
+\gyakorlat{Ha a cél a legrosszabb helyzetű járások felzárkóztatása, a
+fejkvóta és a status quo nem elég: mindkettő a szükséglettel
+\emph{fordítva} arányos. A folytonos szükségletalapú szabályok a helyes
+irányba mozdítanak (a pénz a rászorulóbb járásokhoz áramlik), de a
+szükséglet nagyon egyenetlen eloszlása miatt csak a küszöbös vagy az erősen
+konvex ($\eta$ nagy) célzás lesz igazán progresszív. \textbf{H3
+megerősítve.}}
+
+\subsection{A szükségletarányos célzás megtérülése (K3)}
+
+Egy szükségletarányos oltástámogatás állandósult állapotú éves mérlege
+járásonként (\ref{fig:costeff}.~ábra, \ref{tab:costeff}.~táblázat): országos
+mediánként a haszon/költség arány \ceBcrMedian, de a legmagasabb szükségletű
+kvintilisben \ceBcrTopNeed{} --- \emph{a támogatás ott több társadalmi
+költséget takarít meg, mint amennyibe kerül}. Összesen \ceNPositive{}
+járásban haladja meg a haszon a költséget, és ezek túlnyomórészt a magas
+szükségletű, egyben 290/2014 kedvezményezett járások. A legmagasabb
+szükségletű kvintilis együttes éves nettó társadalmi haszna
+\ceNetTopNeedMrd~Mrd Ft.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.72\linewidth]{fig12_costeffectiveness.pdf}
+\caption{A szükségletarányos oltástámogatás ott térül meg, ahol a legnagyobb
+a szükséglet: haszon/költség arány a szükségletindex függvényében
+(járásonként; piros $=$ 290/2014 kedvezményezett). A szaggatott vonal az
+$1{,}0$ megtérülési küszöb.}
+\label{fig:costeff}
+\end{figure}
+
+\input{tables/t9_costeff.tex}
+
+\subsection{Érzékenységvizsgálat és robusztusság (K5)}
+
+\paragraph{Egyváltozós.}
+A teljes társadalmi várható költséget (\ref{fig:tornado}.~ábra,
+\ref{tab:tornado}.~táblázat) az \emph{aluljelentési szorzó} és a
+\emph{$\pm$50\%-os betegségteher-sáv} uralja; a fajlagos árparaméterek hatása
+kicsi.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.82\linewidth]{fig7_tornado.pdf}
+\caption{Egyváltozós érzékenység: a teljes társadalmi várható éves költség
+(Mrd Ft) az egyes költségtényezők alsó/felső értéke mellett.}
+\label{fig:tornado}
+\end{figure}
+
+\input{tables/t8_tornado.tex}
+
+\paragraph{Kétváltozós.}
+A szükségleti rugalmasság ($\eta \in [0{,}1;\,1{,}5]$) és az aluljelentési
+szorzó ($\in [3;\,15]$) teljes rácsán a teljes szükségletalapú allokáció
+koncentrációs indexe végig \emph{pozitív} ($\twoWayCiMin$--$\twoWayCiMax$),
+és a fejkvótához képest a keret $\twoWayReshufMin$--$\twoWayReshufMax\,\%$-a
+csoportosul át (\ref{fig:twoway}.~ábra). A progresszivitás iránya tehát
+egyik paraméterre sem érzékeny.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{fig11_twoway.pdf}
+\caption{Kétváltozós érzékenység: az átcsoportosított keret aránya (bal) és a
+koncentrációs index (jobb) a szükségleti rugalmasság ($\eta$) és az
+aluljelentési szorzó rácsán.}
+\label{fig:twoway}
+\end{figure}
+
+\paragraph{Valószínűségi (PSA).}
+A \psaDraws{} húzásból a teljes társadalmi várható éves költség 95\%-os sávja
+\psaCostLo--\psaCostHi~Mrd Ft (átlag \psaCostMean). Az 5.~forgatókönyv
+progresszivitása (koncentrációs index a szükséglet szerint) végig
+\emph{pozitív}: 95\%-os sáv $\psaCiLo$--$\psaCiHi$ (átlag $\psaCiMean$); a
+legrosszabb kvintilis részesedése \psaWorstQLo--\psaWorstQHi\,\% (átlag
+\psaWorstQMean).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{fig7b_psa.pdf}
+\caption{PSA (\psaDraws{} húzás): a teljes társadalmi várható költség és az
+5.~forgatókönyv progresszivitásának eloszlása.}
+\label{fig:psa}
+\end{figure}
+
+\paragraph{Súly- és specifikáció-robusztusság.}
+A \wDraws{} Dirichlet-súlyhúzásból \nRobustPriority{} járás marad a
+szükségleti felső decilisben az esetek legalább \robustThreshold\,\%-ában
+(\ref{fig:dir}.~ábra, \ref{tab:robust}.~táblázat). Ettől függetlenül a
+\nSpecs{} diszkrét specifikáció (3 aggregálás + 3 dimenzió-elhagyás + a
+hivatalos mutatóval való csere) \emph{mindegyikében} \nSpecRobust{} járás a
+felső decilisben van (\ref{tab:specrobust}.~táblázat). \textbf{H4
+megerősítve:} a prioritási halmaz robusztus.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{fig8_dirichlet.pdf}
+\caption{Bal: járásonkénti P(felső decilis a szükségletben) a
+Dirichlet-súlyújramintavételből, rendezve. Jobb: a robusztus prioritási
+járások.}
+\label{fig:dir}
+\end{figure}
+
+\input{tables/t7_robust.tex}
+\input{tables/t11_specrobust.tex}
+
+\subsection{Szakpolitikai értékelés (K6)}
+
+A szükségleti prioritási kvintilis ($\needTopQn$ járás) és a 290/2014
+kedvezményezett halmaz ($\nEligibleProxy$ járás) Jaccard-átfedése
+$\policyJaccard$; a prioritási kvintilis $\needTopInElig\,\%$-a a
+kedvezményezett halmazban van (\ref{fig:overlap}.~ábra). A jelenlegi
+\emph{önkormányzati} rotavírus-oltástámogatás mindössze \nDistrictsMuni{}
+járásban azonosítható (mindkettő alacsony szükségletű budapesti kerület,
+30\,000, ill.\ 40\,000~Ft/gyermek); a modellezett szükséglethez mért
+koncentrációs indexe $\ciMuni$. \textbf{H5 megerősítve:} a jelenlegi
+alulról szerveződő finanszírozási minta gyakorlatilag nem fedi a modellezett
+szükségletet.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.55\linewidth]{fig9b_overlap.pdf}
+\caption{A szükségleti prioritási kvintilis és a 290/2014 kedvezményezett
+halmaz átfedése.}
+\label{fig:overlap}
+\end{figure}
+
+\gyakorlat{A rászorultsági rangsor tetején álló járások szinte mind
+hivatalosan is kedvezményezettek --- vagyis egy szükségletalapú
+oltástámogatási formula \emph{ráépíthető} egy már létező, jogszabályban
+rögzített besorolásra. A jelenlegi (önkormányzati) támogatás ezzel szemben
+két gazdag budapesti kerületre korlátozódik.}
+
+% ======================================================================
+\section{Diszkusszió}
+% ======================================================================
+
+Az eredmények három, egymást erősítő mintázatot rajzolnak ki. Először, a
+bejelentett rotavírus-betegségteher vármegyék közötti egyenlőtlensége
+tartós, formális trendteszttel sem csökkenő, és pozitívan együtt mozog a
+munkaerőpiaci depriváltsággal --- a betegség tehát ott a legnagyobb, ahol a
+megelőzés megfizethetősége a legkisebb. Másodszor, járási szinten a
+betegségteher, a szocioökonómiai depriváltság és a gyermek-alapellátási
+kapacitáshiány \emph{halmozottan} jelentkezik; az MPI nem kompenzáló
+aggregálása éppen azokat a járásokat emeli ki, amelyeket a hazai
+területfejlesztési politika is kedvezményezettként kezel (Spearman
+$\needVsOfficialSpearman$ a hivatalos mutatóval). Harmadszor, a jelenlegi
+finanszírozási berendezkedés nem reagál erre a szükségletre.
+
+Az elosztási forgatókönyvek összehasonlítása módszertani tanulsággal is
+szolgál: a \emph{koncentrációs index} és a \emph{Kakwani-index} eltérő
+kérdésre válaszol. A folytonos szükségletalapú szabályok koncentrációs
+indexe (bootstrap-konfidenciaintervallummal is) pozitív --- a támogatás a
+magasabb szükségletű járásokhoz áramlik ---, de Kakwani-indexük enyhén
+negatív, mert a szükséglet eloszlása maga is erősen egyenlőtlen: az
+\emph{arányos} allokáció nem elég progresszív hozzá. Kifejezett
+progresszivitást csak a küszöbös (a 290/2014 kedvezményezett járásokra
+koncentráló) forgatókönyv ér el. A gyakorlati döntéshozatal számára ez azt
+jelenti, hogy ha a cél a legrosszabb helyzetű járások felzárkóztatása, akkor
+küszöbös célzás vagy konvex (nagy $\eta$) szükségleti súlyozás indokolt.
+
+A szükségletalapú allokáció \emph{progresszivitása} minden vizsgált
+dimenzióban robusztusnak bizonyult: a PSA-ban és a kétváltozós rácson a
+koncentrációs index végig pozitív, a Dirichlet-újramintavételben
+\nRobustPriority{} járás, a diszkrét specifikációk mindegyikében
+\nSpecRobust{} járás marad prioritási. A költségparaméterek bizonytalansága
+elsősorban a \emph{teljes költségszintre} hat (\psaCostLo--\psaCostHi Mrd
+Ft), nem az allokáció \emph{alakjára}. Végül a megtérülési elemzés a
+küszöbös célzás \emph{hatékonysági} érvét is megadja: a legmagasabb
+szükségletű járásokban a célzott támogatás társadalmi szinten megtérül
+(haszon/költség \ceBcrTopNeed).
+
+% ======================================================================
+\section{Korlátok}
+% ======================================================================
+
+\begin{itemize}[nosep,leftmargin=1.3em]
+\item \textbf{Területi felbontás és modellezés.} A járási esetszám
+modellezett becslés (populációsúlyozott szétosztás), nem megfigyelés; a
+$\pm$50\%-os hitelességi sáv ezt tükrözi. A becslés feltételezi a
+rotavírus-incidencia vármegyén belüli homogenitását, ami a valóságban nem
+teljesül.
+\item \textbf{Módosítható területi egység és ökológiai következtetés.} Az
+elemzés a járás szintjén zajlik; a mutatók értéke és a köztük lévő
+összefüggés más területi beosztás mellett változhat
+\citep{openshaw1984}, és a járásszintű korrelációk nem vihetők át
+automatikusan az egyénre \citep{robinson1950}. A szükségletindexet ezért
+\emph{relatív, területi célzási} eszköznek, nem egyéni kockázatbecslésnek
+tekintjük.
+\item \textbf{Népességsúly.} A járási gyermeknépességet a KSH vármegyei
+0--14 éves népességéből arányosítjuk a munkavállalási korú népesség szerint;
+a valódi járási 0--4 éves népesség (KSH-kutatószobai vagy egyedi adatkérés)
+tovább pontosítaná.
+\item \textbf{Költségparaméterek.} Minden költségérték \texttt{assumed} vagy
+\texttt{estimated}; a NEAK alapdíj-közlemény \citep{neak_alapdij} és a
+9/1993.~NM~r.\ \citep{nm91993} melléklet pontos, hatályos értékei
+behelyettesítendők. A megtérülési elemzés a \ceUptakeGain\,\%-os feltételezett
+átoltottság-növekményre érzékeny.
+\item \textbf{Alapellátási kapacitás-dimenzió.} Kis járásokban zajos: több
+mélyszegénységi járásban a tartósan betöltetlen gyermekorvosi körzet a
+mintában nulla, így a dimenzió-pontszám a minimumon áll --- e járások
+szükségletindexét a betegség- és a szocioökonómiai dimenzió emeli.
+\item \textbf{Aluljelentés.} A bejelentett esetszám a valós, orvoshoz
+forduló előfordulás töredéke; az ötszörös alap-szorzó tág (3--15)
+bizonytalanságú, és ez az egyváltozós érzékenység legnagyobb tétele.
+\item \textbf{Fiskális dimenzió.} Nincs járási fiskális kapacitás-adat, ezért
+a fiskális büntető $\kappa=0$; ez a 6.~(költségrés) forgatókönyvet
+egyszerűsíti.
+\end{itemize}
+
+% ======================================================================
+\section{Következtetések}
+% ======================================================================
+
+Egy reprodukálható, nyílt adat-pipeline kimeneteire építve megmutattuk, hogy
+a magyar gyermekkori rotavírus-betegségteher vármegyék közötti
+egyenlőtlensége tartós (a nyolcéves trend nem szignifikáns) és a
+munkaerőpiaci depriváltsággal együtt mozog; hogy járási szinten a
+betegségteher, a szocioökonómiai hátrány és az alapellátási kapacitáshiány
+halmozottan jelentkezik, és a belőlük épített szükségletindex külső
+érvényessége erős (a hivatalos fejlettségi mutatóval Spearman
+$\needVsOfficialSpearman$); és hogy \nSpecRobust{} járást minden
+specifikáció, \nRobustPriority-t pedig a súlyok széles tartománya
+prioritásiként azonosít. Nyolc elosztási elv összehasonlítása alapján a
+folytonos szükségletalapú célzás a szükséglethez képest nagyjából arányos,
+kifejezett progresszivitást csak a küszöbös elosztás ér el; a szükségletalapú
+allokáció progresszivitása ugyanakkor robusztus a költség- és
+súlyfeltevésekre, és a legmagasabb szükségletű járásokban a célzott
+oltástámogatás társadalmi szinten megtérül. A jelenlegi önkormányzati
+finanszírozási minta a modellezett szükségletet gyakorlatilag nem fedi. Az
+eredmények egy szükségletalapú, küszöbös vagy konvexen súlyozott állami
+megelőzés-támogatási formula mellett szólnak, amely ráépíthető a 290/2014
+kedvezményezett-járás besorolásra; a keret pontosításához a NEAK/NNGYK/KSH
+adatigénylési útvonalak eredményei szükségesek.
+
+% ======================================================================
+\section*{Fogalomtár}
+\addcontentsline{toc}{section}{Fogalomtár}
+% ======================================================================
+
+\begin{description}[leftmargin=0pt,style=nextline,nosep]
+\item[Gini-együttható] 0 és 1 közötti egyenlőtlenségi mérőszám; 0 $=$ tökéletes
+egyenlőség, 1 $=$ minden egy egységnél. Itt a vármegyék/járások közötti
+eset-ráta, illetve a támogatás egyenlőtlenségét méri.
+\item[Koncentrációs index] $-1$ és $+1$ között; azt mondja meg, hogy egy
+mennyiség (itt: a támogatás) mennyire a rászorulóbb egységekhez áramlik.
+Pozitív $=$ a magasabb szükségletű járások többet kapnak (\emph{progresszív});
+0 $=$ arányos; negatív $=$ regresszív.
+\item[Kakwani-index] A támogatás koncentrációs indexe mínusz a szükséglet
+Gini-együtthatója. Azt méri, hogy a támogatás progresszívebb-e, mint maga a
+szükséglet eloszlása. Pozitív $=$ igazán progresszív.
+\item[Theil-index] Egyenlőtlenségi mérőszám, amely tisztán felbontható
+\enquote{vármegyék közötti} és \enquote{vármegyén belüli} részre.
+\item[Mazziotta--Pareto index (MPI)] Összetett mutató, amely \emph{bünteti}
+a dimenziók közötti egyenetlenséget: egy járás akkor kap magas MPI-t, ha
+\emph{mindhárom} hátrány (betegség, szegénység, kapacitáshiány) egyszerre
+jelen van, nem csak az egyik.
+\item[Bootstrap konfidenciaintervallum] A mérőszám bizonytalanságának
+becslése a járások sokszori (2000) véletlen újramintavételével.
+\item[Aluljelentési szorzó] Ahányszorosára becsüljük a valós, orvoshoz
+forduló esetszámot a hivatalosan bejelentetthez képest.
+\end{description}
+
+% ======================================================================
+\section*{Reprodukálhatóság}
+\addcontentsline{toc}{section}{Reprodukálhatóság}
+% ======================================================================
+
+Minden ábra és táblázat regenerálható a pipeline parquet-kimeneteiből az
+\texttt{analysis/R/} szkriptekkel (\texttt{run\_all.R}) vagy a párhuzamos
+\texttt{analysis/python/run\_analysis.py} vezérlővel; a kiegészítő,
+magasabb felbontású bemeneteket az \texttt{analysis/python/acquire\_extra.py}
+állítja elő az \texttt{analysis/data/\_provenance.json} forrásnaplóval. A
+beállítások az \texttt{analysis/config/analysis.yaml} és
+\texttt{cost\_parameters\_analysis.yaml} fájlokban vannak. A Monte-Carlo
+lépések magja \seed. A dolgozat az \texttt{analysis/paper/tables/\_numbers.tex}
+generált számmakróit használja, így minden itt közölt szám az adott futásból
+származik.
+
+\bibliographystyle{plainnat}
+\bibliography{hivatkozasok}
+
+\end{document}

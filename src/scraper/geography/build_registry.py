@@ -86,13 +86,59 @@ class RegistryBuild:
 # --------------------------------------------------------------------------- #
 
 # Heuristic header aliases for KSH TSZJ workbooks (layouts vary by vintage).
+# Matching is exact against the normalised header (see ``_norm_header``): a "\n"
+# becomes a space and the text is lower-cased. The first alias present wins, so
+# the concrete KSH '…megnevezesekkel' headers are listed before looser fallbacks.
 _TSZJ_ALIASES = {
-    "settlement_id": ["törzsszám", "torzsszam", "település törzsszáma", "telepules_torzsszam", "ksh kód", "ksh_kod"],
-    "settlement_name": ["település megnevezése", "telepules", "helység", "település neve", "megnevezés"],
-    "district_id": ["járás kódja", "jaras_kod", "járás azonosító", "járáskód"],
-    "district_name": ["járás megnevezése", "jaras", "járás neve", "járás"],
-    "county_id": ["megye kódja", "megyekod", "vármegye kódja", "megye_kod"],
-    "county_name": ["megye megnevezése", "megye", "vármegye", "megye neve"],
+    "settlement_id": [
+        "település-azonosító törzsszám településkód",
+        "település-azonosító törzsszám\ntelepüléskód",
+        "településazonosító törzsszám",
+        "törzsszám",
+        "torzsszam",
+        "település törzsszáma",
+        "telepules_torzsszam",
+        "ksh kód",
+        "ksh_kod",
+    ],
+    "settlement_name": [
+        "név",
+        "település megnevezése",
+        "telepules",
+        "helység",
+        "település neve",
+        "megnevezés",
+    ],
+    "district_id": [
+        "járás kód",
+        "járási kód",
+        "járás kódja",
+        "jaras_kod",
+        "járás azonosító",
+        "járáskód",
+    ],
+    "district_name": [
+        "járás neve",
+        "járás megnevezése",
+        "jaras",
+        "járás",
+    ],
+    "county_id": [
+        "területi jelzőszámból képzett megyekód",
+        "megyekód",
+        "megye kódja",
+        "megyekod",
+        "vármegye kódja",
+        "megye_kod",
+    ],
+    "county_name": [
+        "vármegyenév",
+        "megye megnevezése",
+        "vármegye neve",
+        "megye",
+        "vármegye",
+        "megye neve",
+    ],
     "postal_codes": ["irányítószám", "iranyitoszam", "irsz", "posta irányítószám"],
 }
 
@@ -143,7 +189,13 @@ def parse_tszj_workbook(path: Path) -> pd.DataFrame:
         if col not in out.columns:
             out[col] = ""
     out["settlement_id"] = out["settlement_id"].str.zfill(5)
-    out = out[out["settlement_id"].str.match(r"\d{5}")]
+    out = out[out["settlement_id"].str.match(r"\d{5}$")]
+    # KSH TSZJ workbooks carry "…területre nem bontható adatai" pseudo-rows with
+    # a fiktív district code (999) — drop them; they are not settlements.
+    out["district_id"] = out["district_id"].str.replace(r"\D", "", regex=True).str.zfill(3)
+    out["county_id"] = out["county_id"].str.replace(r"\D", "", regex=True).str.zfill(2)
+    out = out[(out["district_id"] != "999") & (out["district_id"] != "000")]
+    out = out[out["county_id"] != "00"]
     return out[CANONICAL_COLUMNS].drop_duplicates("settlement_id")
 
 
@@ -279,7 +331,8 @@ def build_registry(config: Config, *, registry_dir: Path | None = None) -> Regis
         key_cols=["district_name", "county_id", "county_name", "nuts3_code", "nuts2_code"],
         id_col="district_id",
     )
-    districts["is_budapest_district"] = districts["district_id"].str.startswith(("01", "1"))  # heuristic
+    # Budapest's 23 kerület sit under county code 01 and stand in for "járás".
+    districts["is_budapest_district"] = districts["county_id"].astype(str).str.zfill(2) == "01"
 
     boundary_changes = _boundary_changes(per_year)
 

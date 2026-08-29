@@ -25,7 +25,14 @@ def test_run_requires_a_source():
 
 def test_geography_build_reports_missing_sources(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
+    from scraper.geography import build_registry as br
     from scraper.geography.__main__ import app
+
+    # point every input/output path at the empty tmp tree so the build has no
+    # source files to find (independent of what the real data/ tree holds)
+    monkeypatch.setattr(br, "RAW_DIR", tmp_path / "raw")
+    monkeypatch.setattr(br, "MANUAL_REGISTRY_DIR", tmp_path / "raw" / "ksh" / "manual" / "registry")
+    monkeypatch.setattr(br, "PROCESSED_DIR", tmp_path / "processed")
 
     res = runner.invoke(app, ["build"])
     assert res.exit_code == 2
@@ -45,8 +52,9 @@ def test_process_district_panel_without_geo_errors(monkeypatch, tmp_path):
     from scraper.process import app
     from scraper.processing import panel as panel_mod
 
-    # redirect the county-panel write into the tmp tree; the district step then
-    # fails fast because geo_districts.parquet is absent
+    # redirect every processed-tree path into tmp; the district step then
+    # fails fast because geo_districts.parquet is absent there
+    monkeypatch.setattr(panel_mod, "PROCESSED_DIR", tmp_path)
     monkeypatch.setattr(panel_mod, "COUNTY_WEEKLY_OUT", tmp_path / "cw.parquet")
     monkeypatch.setattr(panel_mod, "DISTRICT_PANEL_OUT", tmp_path / "dp.parquet")
     res = runner.invoke(app, ["panel", "--resolution", "district"])

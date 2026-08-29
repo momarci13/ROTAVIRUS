@@ -1,0 +1,54 @@
+{
+  "updated_at": "2026-08-28T21:35:28.831374+00:00",
+  "columns": [
+    {
+      "name": "stationnumber",
+      "dtype": "object"
+    },
+    {
+      "name": "startdate",
+      "dtype": "object"
+    },
+    {
+      "name": "enddate",
+      "dtype": "object"
+    },
+    {
+      "name": "latitude",
+      "dtype": "object"
+    },
+    {
+      "name": "longitude",
+      "dtype": "object"
+    },
+    {
+      "name": "elevation",
+      "dtype": "object"
+    },
+    {
+      "name": "stationname",
+      "dtype": "object"
+    },
+    {
+      "name": "regioname",
+      "dtype": "object"
+    },
+    {
+      "name": "eor",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "record_kind",
+      "dtype": "object"
+    }
+  ],
+  "hash": "55976a1998757b70d9406c3946a605a3505baecc94d958d78ad05d24425922a0"
+}

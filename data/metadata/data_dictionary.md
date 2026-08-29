@@ -4,26 +4,26 @@ Generált fájl (`python -m scraper.report dictionary`). Minden oszlop a `config
 
 | Oszlop | Blokk | Tier | geo_level | Időbeli felbontás | Egység | evidence_class | Forrás | Forrás-URL | Lefedett évek | Hiányzó arány | Megjelenik |
 | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
-| district_id | identifier | 1 | district | none | code | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | district_panel.parquet |
-| district_name | identifier | 2 | district | none | text | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | district_panel.parquet |
-| county_id | identifier | 1 | county | none | code | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | county_weekly_epi.parquet, district_panel.parquet |
-| county_name | identifier | 2 | county | none | text | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | district_panel.parquet |
-| nuts3_code | identifier | 2 | county | none | code | observed | geo | https://data2.openstreetmap.hu | 2024–2024 | 0% | district_panel.parquet |
+| district_id | identifier | 1 | district | none | code | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | district_panel.parquet, geo_districts.parquet, geo_settlements.parquet |
+| district_name | identifier | 2 | district | none | text | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | district_panel.parquet, geo_districts.parquet |
+| county_id | identifier | 1 | county | none | code | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | county_weekly_epi.parquet, district_panel.parquet, geo_districts.parquet, geo_settlements.parquet |
+| county_name | identifier | 2 | county | none | text | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | district_panel.parquet, geo_districts.parquet |
+| nuts3_code | identifier | 2 | county | none | code | observed | geo | https://data2.openstreetmap.hu | 2017–2026 | 0% | district_panel.parquet, geo_districts.parquet |
 | year | identifier | 1 | district | yearly | year | observed | ksh | https://www.ksh.hu | — | 0% | district_panel.parquet |
 | month | identifier | 2 | district | monthly | month | observed | ksh | https://www.ksh.hu | — | — | — |
-| iso_week | identifier | 1 | county | weekly | week | observed | nngyk | https://nngyk.gov.hu | — | 25% | county_weekly_epi.parquet |
+| iso_week | identifier | 1 | county | weekly | week | observed | nngyk | https://nngyk.gov.hu | — | 0% | county_weekly_epi.parquet |
 | period_start | identifier | 1 | district | none | date | observed | ksh | https://www.ksh.hu | — | 0% | county_weekly_epi.parquet |
 | period_end | identifier | 1 | district | none | date | observed | ksh | https://www.ksh.hu | — | 0% | county_weekly_epi.parquet |
 | population_total | demography | 1 | district | yearly | persons | observed | ksh | https://www.ksh.hu | — | — | — |
 | population_0_4 | demography | 1 | district | yearly | persons | observed | ksh | https://www.ksh.hu | — | — | — |
 | population_0_1 | demography | 2 | district | yearly | persons | observed | ksh | https://www.ksh.hu | — | — | — |
 | births | demography | 2 | district | yearly | persons | observed | ksh | https://www.ksh.hu | — | — | — |
-| rotavirus_cases_district_modelled | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 0% | district_panel.parquet |
-| rotavirus_cases_district_modelled_lo | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 0% | district_panel.parquet |
-| rotavirus_cases_district_modelled_hi | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 0% | district_panel.parquet |
-| rotavirus_incidence_u5_modelled | epidemiology | 1 | district | yearly | per_1000 | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 0% | district_panel.parquet |
-| hospitalisations_modelled | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 100% | district_panel.parquet |
-| expected_cases_per_1000_u5_modelled | epidemiology | 1 | district | yearly | per_1000 | estimated | nngyk | https://nngyk.gov.hu | 2024–2024 | 0% | district_panel.parquet |
+| rotavirus_cases_district_modelled | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 0% | district_panel.parquet |
+| rotavirus_cases_district_modelled_lo | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 0% | district_panel.parquet |
+| rotavirus_cases_district_modelled_hi | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 0% | district_panel.parquet |
+| rotavirus_incidence_u5_modelled | epidemiology | 1 | district | yearly | per_1000 | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 0% | district_panel.parquet |
+| hospitalisations_modelled | epidemiology | 1 | district | yearly | cases | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 100% | district_panel.parquet |
+| expected_cases_per_1000_u5_modelled | epidemiology | 1 | district | yearly | per_1000 | estimated | nngyk | https://nngyk.gov.hu | 2017–2026 | 0% | district_panel.parquet |
 | jobseeker_rate | socioeconomic | 1 | district | monthly | ratio | observed | nfsz | https://nfsz.munka.hu | — | — | — |
 | registered_jobseekers | socioeconomic | 2 | district | monthly | persons | observed | nfsz | https://nfsz.munka.hu | — | — | — |
 | pit_income_per_capita | socioeconomic | 1 | district | yearly | huf | observed | ksh | https://www.ksh.hu | — | — | — |
@@ -62,8 +62,8 @@ Generált fájl (`python -m scraper.report dictionary`). Minden oszlop a `config
 | need_score | allocation | 1 | district | yearly | index | estimated | ksh | https://www.ksh.hu | — | — | — |
 | aid_amount_huf | allocation | 1 | district | yearly | huf | estimated | ksh | https://www.ksh.hu | — | — | — |
 | scenario_id | allocation | 1 | district | yearly | code | assumed | ksh | https://www.ksh.hu | — | — | — |
-| evidence_class | quality | 1 | district | none | enum | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | county_weekly_epi.parquet, district_panel.parquet |
-| quality_flag | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | county_weekly_epi.parquet, district_panel.parquet |
-| source_id | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | 2024–2024 | 0% | county_weekly_epi.parquet, district_panel.parquet |
+| evidence_class | quality | 1 | district | none | enum | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | county_weekly_epi.parquet, district_panel.parquet |
+| quality_flag | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | county_weekly_epi.parquet, district_panel.parquet |
+| source_id | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | 2017–2026 | 0% | county_weekly_epi.parquet, district_panel.parquet |
 | extraction_run_id | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | — | — | — |
 | missing_reason | quality | 1 | district | none | text | observed | ksh | https://www.ksh.hu | — | — | — |

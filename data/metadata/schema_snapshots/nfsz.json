@@ -1,0 +1,46 @@
+{
+  "updated_at": "2026-08-28T21:35:28.918296+00:00",
+  "columns": [
+    {
+      "name": "settlement_name",
+      "dtype": "object"
+    },
+    {
+      "name": "registered_jobseekers",
+      "dtype": "float64"
+    },
+    {
+      "name": "working_age_population",
+      "dtype": "float64"
+    },
+    {
+      "name": "relative_indicator_pct",
+      "dtype": "float64"
+    },
+    {
+      "name": "county_sheet",
+      "dtype": "object"
+    },
+    {
+      "name": "period_start",
+      "dtype": "object"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "geo_level",
+      "dtype": "object"
+    }
+  ],
+  "hash": "72b1adda429fcfe797d5f76ebd029afba20b28b48d06e21dcfebf2bdfd6758e0"
+}

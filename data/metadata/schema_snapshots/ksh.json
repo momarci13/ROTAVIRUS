@@ -1,0 +1,26 @@
+{
+  "updated_at": "2026-08-28T21:35:28.852342+00:00",
+  "columns": [
+    {
+      "name": "deflator_source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "year",
+      "dtype": "int64"
+    },
+    {
+      "name": "index_value",
+      "dtype": "float64"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    }
+  ],
+  "hash": "b4cbbde0257520e1b843261e02aa6736217002019222d4786782fa9cad5fbedb"
+}

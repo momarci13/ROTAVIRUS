@@ -1,0 +1,54 @@
+{
+  "updated_at": "2026-08-28T21:35:29.065894+00:00",
+  "columns": [
+    {
+      "name": "county_name",
+      "dtype": "object"
+    },
+    {
+      "name": "settlement_name",
+      "dtype": "object"
+    },
+    {
+      "name": "postal_code",
+      "dtype": "object"
+    },
+    {
+      "name": "practice_type",
+      "dtype": "object"
+    },
+    {
+      "name": "practice_type_raw",
+      "dtype": "object"
+    },
+    {
+      "name": "vacant_since",
+      "dtype": "object"
+    },
+    {
+      "name": "persistently_vacant_since",
+      "dtype": "object"
+    },
+    {
+      "name": "snapshot_date",
+      "dtype": "object"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "geo_level",
+      "dtype": "object"
+    }
+  ],
+  "hash": "67ac0f1d5cbea951f48d93a7a1a6c9644473a3fedb0d3db6956bfea1183bd397"
+}

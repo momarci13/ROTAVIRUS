@@ -20,7 +20,28 @@ import pandas as pd
 from scraper.collectors.base import Collector, Resource
 from scraper.parsers.html_tables import normalise_columns, read_tables
 
-_TYPE_MAP = {"v": "gp_adult", "f": "paediatric", "g": "mixed"}
+_TYPE_MAP = {
+    "v": "gp_adult",
+    "f": "paediatric",
+    "g": "mixed",
+    "h": "mixed",
+    "vegyes": "mixed",
+    "felnőtt": "gp_adult",
+    "gyermek": "paediatric",
+}
+
+#: the OKFŐ / Wayback vacant-practice table is a stable 6-column layout whose
+#: real header sits 1-3 rows down (a "Aktuális: <date>" banner precedes it) and
+#: whose settlement column often has a blank/merged header cell. Parse it by
+#: position once the header row is located.
+_OKFO_POSITIONS = [
+    "county_name",
+    "practice_type_raw",
+    "postal_code",
+    "settlement_name",
+    "vacant_since",
+    "persistently_vacant_since",
+]
 
 
 class OKFOCollector(Collector):
@@ -90,18 +111,22 @@ class OKFOCollector(Collector):
             self.log.info("okfo.no_tables", file=path.name)
             return pd.DataFrame()
         df = max(tables, key=len)
-        df = normalise_columns(
-            df,
-            {
-                "vármegye": "county_name",
-                "megye": "county_name",
-                "típus": "practice_type_raw",
-                "irányítószám": "postal_code",
-                "irsz": "postal_code",
-                "település": "settlement_name",
-                "betöltetlen": "vacant_since",
-            },
-        )
+        positional = _by_position(df)
+        if positional is not None:
+            df = positional
+        else:
+            df = normalise_columns(
+                df,
+                {
+                    "vármegye": "county_name",
+                    "megye": "county_name",
+                    "típus": "practice_type_raw",
+                    "irányítószám": "postal_code",
+                    "irsz": "postal_code",
+                    "település": "settlement_name",
+                    "betöltetlen": "vacant_since",
+                },
+            )
         if "settlement_name" not in df.columns and "postal_code" not in df.columns:
             self.log.info("okfo.unrecognised_table", file=path.name, cols=list(df.columns)[:10])
             return pd.DataFrame()
@@ -117,10 +142,36 @@ class OKFOCollector(Collector):
         df["geo_level"] = "settlement"
         keep = [
             c
-            for c in ("county_name", "settlement_name", "postal_code", "practice_type", "vacant_since", "snapshot_date", "evidence_class", "source_id", "source_file", "geo_level")
+            for c in ("county_name", "settlement_name", "postal_code", "practice_type", "practice_type_raw", "vacant_since", "persistently_vacant_since", "snapshot_date", "evidence_class", "source_id", "source_file", "geo_level")
             if c in df.columns
         ]
-        return df[keep]
+        # OKFŐ snapshots occasionally repeat a line verbatim — collapse exact dups
+        return df[keep].drop_duplicates().reset_index(drop=True)
+
+
+def _by_position(df: pd.DataFrame) -> pd.DataFrame | None:
+    """Locate the header row (contains 'vármegye'/'megye') in the raw OKFŐ table
+    and return the data rows renamed by fixed position. ``None`` if the layout
+    is not the expected 6-column shape."""
+    if df.shape[1] != len(_OKFO_POSITIONS):
+        return None
+    header_row = None
+    for i in range(min(6, len(df))):
+        cells = " ".join(str(v).strip().lower() for v in df.iloc[i].tolist())
+        if "vármegye" in cells or "megye" in cells:
+            header_row = i
+            break
+    if header_row is None:
+        return None
+    body = df.iloc[header_row + 1 :].copy()
+    body.columns = _OKFO_POSITIONS
+    # keep only genuine data rows: a 4-digit postal code
+    pc = body["postal_code"].astype(str).str.extract(r"(\d{4})", expand=False)
+    body = body.loc[pc.notna()].copy()
+    body["postal_code"] = pc.loc[body.index]
+    for col in ("county_name", "settlement_name", "practice_type_raw"):
+        body[col] = body[col].astype(str).str.strip()
+    return body.reset_index(drop=True)
 
 
 def _stamp_from_name(name: str) -> str | None:

@@ -209,20 +209,32 @@ sources:
     parser: excel
     update_frequency: monthly
     robots_allowed: true
+    # File lists are loaded by an XHR the page fires on load (resolved 2026-08-28):
+    #   POST /common/service/requestparser
+    #   form: documentTitle= dateFrom= dateTo= id=<doc_category_id>
+    #         name=statistics_filter_documents type=all
+    #   -> JSON array of {TITLE, DOC_URL_PUB}; DOC_URL_PUB is a site-relative path.
+    xhr_endpoint: "https://nfsz.munka.hu/common/service/requestparser"
+    xhr_form_name: "statistics_filter_documents"
     resources:
       - key: telepulessoros
         type: listing
         url: "https://nfsz.munka.hu/tart/stat_telepulessoros_adatok"
+        doc_category_id: 11
         status: verified
-        notes: "Settlement-level unemployment. File list to_discover."
+        notes: "Settlement-level registered-jobseeker workbooks (monthly, T01<yyyymm>.xlsx)."
       - key: teruleti_bontas
         type: listing
         url: "https://nfsz.munka.hu/tart/stat_teruleti_bontas"
+        doc_category_id: 14
         status: verified
+        notes: "Time-series workbooks at országos / vármegyei / járási breakdown."
       - key: egyeni_berek
         type: listing
         url: "https://nfsz.munka.hu/tart/stat_egyeni_berek"
+        doc_category_id: 17
         status: verified
+        notes: "Individual wages/earnings yearly time series (PDF)."
 
   # ------------------------------------------------------------------- OKFO ---
   okfo:

@@ -1,0 +1,8 @@
+# A 290/2014. (XI. 26.) Korm. rendelet 1-3. melléklete szerinti kedvezményezett
+# járások. Az automatikus jogtar-kinyerés nem adott használható járásneveket,
+# ezért ezt a listát a rendelet hatályos mellékletéből kézzel kell kitölteni.
+# Amíg üres/hiányos (<50 sor), a 7. forgatókönyv PROXY jogosultsági szabállyal
+# fut (a szocioökonómiai depriváltság legrosszabb harmada), és ezt a dolgozat
+# jelzi. Oszlopok: district_name (a geo_districts.parquet szerinti alak),
+# kategoria (kedvezmenyezett | fejlesztendo | komplex_programmal_fejlesztendo).
+district_name,kategoria

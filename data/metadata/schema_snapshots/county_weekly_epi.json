@@ -1,5 +1,6 @@
 {
-  "updated_at": "2026-08-28T18:13:34.637579+00:00",
+  "updated_at": "2026-08-28T21:36:17.997914+00:00",
+  "previous_hash": "92115a7ebb9676e65d29a11800a95bd9a255ceba43af15c563844e84b57affa3",
   "columns": [
     {
       "name": "geo_level",
@@ -23,7 +24,7 @@
     },
     {
       "name": "iso_week",
-      "dtype": "float64"
+      "dtype": "int64"
     },
     {
       "name": "period_start",
@@ -58,5 +59,5 @@
       "dtype": "object"
     }
   ],
-  "hash": "92115a7ebb9676e65d29a11800a95bd9a255ceba43af15c563844e84b57affa3"
+  "hash": "c11acd2974c49bbcaa89ad79b1ac700681392e2b10b8d9956e86841fd236a201"
 }

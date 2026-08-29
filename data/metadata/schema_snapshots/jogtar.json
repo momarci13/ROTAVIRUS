@@ -1,0 +1,50 @@
+{
+  "updated_at": "2026-08-28T21:35:28.846013+00:00",
+  "columns": [
+    {
+      "name": "district_name",
+      "dtype": "object"
+    },
+    {
+      "name": "komplex_mutato_2014",
+      "dtype": "object"
+    },
+    {
+      "name": "kedvezmenyezett_status",
+      "dtype": "object"
+    },
+    {
+      "name": "evidence_class",
+      "dtype": "object"
+    },
+    {
+      "name": "source_id",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    },
+    {
+      "name": "municipality_key",
+      "dtype": "object"
+    },
+    {
+      "name": "mentions_rotavirus",
+      "dtype": "object"
+    },
+    {
+      "name": "support_amount_huf_candidates",
+      "dtype": "object"
+    },
+    {
+      "name": "support_amount_huf",
+      "dtype": "float64"
+    },
+    {
+      "name": "extracted_at",
+      "dtype": "object"
+    }
+  ],
+  "hash": "565653c6d97899bc6c6e5ce2bbdc6f04b10725d3db65c9ac34371d7fc9632307"
+}

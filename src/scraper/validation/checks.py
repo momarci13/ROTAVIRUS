@@ -78,11 +78,19 @@ class ValidationContext:
 
 
 def check_duplicates(ctx: ValidationContext) -> list[Finding]:
-    geo = ctx.col("geo_id", "district_id", "county_id", "geo_name")
-    per = ctx.col("period_start", "iso_week", "year")
+    geo = ctx.col("geo_id", "district_id", "county_id", "settlement_id", "settlement_name", "geo_name")
+    per = ctx.col("period_start", "iso_week", "year", "snapshot_date")
     var = ctx.col("variable")
-    keys = [c for c in (geo, "geo_level", per, var) if c and c in ctx.df.columns]
-    if len(keys) < 2:
+    # extra discriminators for list-shaped collector intermediates (a settlement
+    # may hold several rows in one period: multiple vacant practices, etc.)
+    extra = [
+        c
+        for c in ("practice_type", "practice_type_raw", "postal_code", "vacant_since", "persistently_vacant_since")
+        if c in ctx.df.columns
+    ]
+    keys = [c for c in [geo, "geo_level", per, var, *extra] if c and c in ctx.df.columns]
+    # need a genuine geo dimension: geo_level + period alone is not a dedup key
+    if geo is None or len(keys) < 3:
         return []
     dup = ctx.df.duplicated(subset=keys, keep=False)
     if not dup.any():
@@ -146,26 +154,32 @@ def check_missing_units(ctx: ValidationContext) -> list[Finding]:
 
 
 def check_valid_ids(ctx: ValidationContext) -> list[Finding]:
-    reg = ctx.geo_districts if ctx.resolution == "district" else ctx.geo_counties
-    geo = ctx.col("geo_id", "district_id", "county_id")
-    if reg is None or geo is None:
-        return []
-    reg_id = "district_id" if ctx.resolution == "district" else "county_id"
-    if reg_id not in reg.columns:
-        return []
-    valid = set(reg[reg_id].astype(str))
-    ids = ctx.df[geo].astype(str)
-    bad = ids[~ids.isin(valid) & ids.ne("nan") & ids.ne("")]
-    if bad.empty:
-        return []
-    return [
-        Finding(
-            "valid_ids",
-            "error",
-            f"{bad.nunique()} geo id(s) not in the period-valid registry: {sorted(bad.unique())[:15]}",
-            len(bad),
-        )
+    """Every geo id present in the frame must exist in the registry for that
+    level. County and district ids are checked independently against their own
+    registry so the resolution flag cannot cause a level mismatch (e.g. a
+    ``district_id`` column compared against the set of county ids)."""
+    findings: list[Finding] = []
+    checks: list[tuple[str, pd.DataFrame | None, str]] = [
+        ("county_id", ctx.geo_counties, "county"),
+        ("district_id", ctx.geo_districts, "district"),
     ]
+    for col, reg, level in checks:
+        if reg is None or col not in ctx.df.columns or col not in reg.columns:
+            continue
+        valid = set(reg[col].astype(str))
+        ids = ctx.df[col].astype(str)
+        bad = ids[~ids.isin(valid) & ids.ne("nan") & ids.ne("")]
+        if bad.empty:
+            continue
+        findings.append(
+            Finding(
+                "valid_ids",
+                "error",
+                f"{bad.nunique()} {level} id(s) not in the period-valid registry: {sorted(bad.unique())[:15]}",
+                len(bad),
+            )
+        )
+    return findings
 
 
 # --------------------------------------------------------------------------- #

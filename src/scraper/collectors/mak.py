@@ -42,6 +42,21 @@ class MAKCollector(Collector):
                 "mak.no_files",
                 hint="portal may require interactive report selection; place exports in data/raw/mak/manual/",
             )
+            # surface it in MANUAL_EXTRACTION_QUEUE.md via the run reporter
+            out.append(
+                Resource(
+                    key="mak_onkormanyzati_beszamolok_manual",
+                    url=r.url,
+                    resource_type="manual_export",
+                    manual=True,
+                    meta={
+                        "notes": "ÁKD közpénzügyi portál: interaktív riportépítő, nincs tömeges "
+                        "letöltés. Építs 'Éves költségvetési beszámoló' riportot települési "
+                        "bontásban (saját bevétel, kiadás), és mentsd XLSX-ként ide: "
+                        "data/raw/mak/manual/"
+                    },
+                )
+            )
         return out
 
     def parse(self, path: Path) -> pd.DataFrame:

@@ -1,0 +1,38 @@
+{
+  "updated_at": "2026-08-28T21:35:29.120604+00:00",
+  "columns": [
+    {
+      "name": "settlement_id",
+      "dtype": "object"
+    },
+    {
+      "name": "settlement_name",
+      "dtype": "object"
+    },
+    {
+      "name": "postal_codes",
+      "dtype": "object"
+    },
+    {
+      "name": "district_id",
+      "dtype": "object"
+    },
+    {
+      "name": "county_id",
+      "dtype": "object"
+    },
+    {
+      "name": "valid_from",
+      "dtype": "object"
+    },
+    {
+      "name": "valid_to",
+      "dtype": "object"
+    },
+    {
+      "name": "source_file",
+      "dtype": "object"
+    }
+  ],
+  "hash": "7fbe2fdb00a3b2562fdae41805df5fa24c824bad119a61c72fd272993079c756"
+}
