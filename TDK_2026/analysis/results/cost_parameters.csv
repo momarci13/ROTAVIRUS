@@ -1,0 +1,16 @@
+param,desc,base,low,high,unit,evidence,confidence
+hbcs_base_rate,Aktív fekvőbeteg‑ellátás alapdíja (Ft/súlyszám),300000.0,264000.0,360000.0,huf_per_weight,assumed,low
+outpatient_point_value,Járóbeteg‑szakellátás német pont forintértéke (Ft/pont),2.0,1.6,3.0,huf_per_point,assumed,low
+hbcs_weight_paed_gastroenteritis,Gyermekkori (0–4 év) gastroenteritis / dehidráció HBCs súlyszáma,0.55,0.4,0.75,weight,assumed,low
+outpatient_points_per_case,Egy rotavírus‑eset átlagos járóbeteg‑pontszáma (vizit + gyorsteszt + rehidrációs tanácsadás),300.0,150.0,600.0,point,estimated,low
+gp_visit_cost,Háziorvosi / házi gyermekorvosi vizit fajlagos (marginális) költsége egy akut esetnél (Ft),4000.0,2500.0,7000.0,huf,estimated,low
+hospitalisation_rate_notified,Bejelentett rotavírus‑esetek kórházi felvételi aránya,0.45,0.25,0.7,ratio,assumed,low
+underreporting_multiplier,"Bejelentett → orvoshoz forduló valós esetszám szorzó (aluljelentés‑korrekció, közösségi eseteket nem tartalmaz)",5.0,3.0,15.0,multiplier,assumed,low
+parental_work_loss_probability,Egy 0–4 éves gyermek rotavírus‑gastroenteritiséhez kapcsolódó szülői munkakiesés valószínűsége (π_szülői),0.75,0.5,0.95,probability,assumed,low
+mean_parental_workdays_lost,Egy esetre jutó átlagos szülői kiesett munkanap (d),3.0,1.5,5.0,days,assumed,low
+daily_gross_wage,"Napi bruttó átlagkereset (nemzetgazdasági átlag), Ft/nap, 2024. évi árszint",30000.0,25000.0,35000.0,huf_per_day,estimated,medium
+employer_contribution_rate,"Szociális hozzájárulási adó kulcsa (τ), a bruttó bér melletti munkáltatói teher",0.13,0.13,0.13,rate,observed,high
+working_days_per_year,Munkanapok száma évente (D_munkanap),253.0,250.0,255.0,days,observed,high
+vaccine_course_price,Teljes rotavírus oltási sorozat (Rotarix 2 dózis / RotaTeq 3 dózis) magánpiaci ára (Ft),38000.0,28000.0,48000.0,huf,estimated,low
+vaccine_administration_cost,Oltás beadásának díja (Ft/sorozat),3000.0,1500.0,5000.0,huf,estimated,low
+vaccine_efficacy,Rotavírus oltás hatásossága súlyos rotavírus‑gastroenteritis ellen,0.85,0.75,0.93,ratio,assumed,medium

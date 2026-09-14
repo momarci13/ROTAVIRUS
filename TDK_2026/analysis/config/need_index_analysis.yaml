@@ -1,0 +1,31 @@
+# Csökkentett szükségletindex – az elemzésben ténylegesen elérhető változókra.
+# Az eredeti config/need_index.yaml négy dimenziója közül a fiskális kapacitás
+# kimarad (nincs járási fiskális adat); a maradék három súlya arányosan
+# újranormálva (0,35 / 0,30 / 0,20  ->  0,412 / 0,353 / 0,235).
+
+standardisation: zscore          # elsődleges; robusztussági változat: minmax, rank
+aggregation: mpi                 # Mazziotta–Pareto (nem kompenzáló); rob.: weighted_sum, entropy
+
+mpi:
+  penalty_sign: negative
+
+dimensions:
+  disease:
+    weight: 0.412
+    direction: higher_is_more_need
+    variables: [burden_rate]                       # modellezett járási betegségteher / 100e fő
+  socioeconomic:
+    weight: 0.353
+    direction: higher_is_more_need
+    variables: [jobseeker_rate]                    # nyilvántartott álláskeresők / munkaváll. korú népesség
+  healthcare:
+    weight: 0.235
+    direction: higher_is_more_need
+    variables: [vacant_paed_practice_rate]         # tartósan betöltetlen házi(gyermek)orvosi körzetek / 100e fő
+
+inverse_suffix: "_inverse"
+
+missing_data:
+  warn_threshold: 0.10
+  error_threshold: 0.40
+  impute: median

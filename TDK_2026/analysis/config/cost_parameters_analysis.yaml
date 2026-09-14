@@ -1,0 +1,213 @@
+# =============================================================================
+# ELEMZÉSI RÉTEG – átlátható költségparaméter‑feltevések
+# =============================================================================
+# Ez NEM a `config/cost_parameters.yaml` helyettesítője. A pipeline magmodulja
+# a szabály szerint LEÁLL, ha egy kötelező paraméter hiányzik, és soha nem
+# helyettesít default számot. A TDK‑elemzéshez azonban base‑case szükséges:
+# ez a fájl tételesen, forrásmegjelöléssel és megbízhatósági szinttel rögzíti
+# az alap / alsó / felső értékeket, amelyeket az érzékenységvizsgálat változtat.
+#
+# MINDEN itteni érték `assumed` vagy `estimated`, amíg a NEAK 2025. évi
+# alapdíj‑közleményéből, a 9/1993. NM r. mellékletéből és a KSH keresetadatból
+# meg nem erősítik. A dolgozat "Korlátok" fejezete ezt kimondja.
+#
+# Mezők: base / low / high (érzékenységi tartomány), unit, evidence_class,
+#        source_citation, source_url, source_year, confidence.
+# -----------------------------------------------------------------------------
+
+meta:
+  base_price_year: 2025
+  currency: HUF
+  note: >
+    A base_price_year 2025. A 2024‑es árszintű paraméterek (napi bruttó bér) a
+    KSH bruttó keresetindexszel deflálva: c_valós = c_nominális · P_2025 / P_2024.
+
+parameters:
+
+  hbcs_base_rate:
+    description: "Aktív fekvőbeteg‑ellátás alapdíja (Ft/súlyszám)"
+    unit: huf_per_weight
+    base: 300000
+    low: 264000          # ismert 2024. évi érték
+    high: 360000
+    price_year: 2025
+    evidence_class: assumed
+    source_citation: "NEAK közlemény a fekvő‑ és járóbeteg‑szakellátás teljesítményegységeinek forintértékéről; 8/2025. (II. 6.) Korm. rendelet. A pontos 2025. évi érték a közleményből behelyettesítendő."
+    source_url: "https://www.neak.gov.hu/szakmai_kozlemenyek/alapdij_kozlemeny"
+    source_year: 2025
+    confidence: low
+
+  outpatient_point_value:
+    description: "Járóbeteg‑szakellátás német pont forintértéke (Ft/pont)"
+    unit: huf_per_point
+    base: 2.0
+    low: 1.6
+    high: 3.0
+    price_year: 2025
+    evidence_class: assumed
+    source_citation: "NEAK alapdíj‑közlemény, járóbeteg teljesítményegység‑díj."
+    source_url: "https://www.neak.gov.hu/szakmai_kozlemenyek/alapdij_kozlemeny"
+    source_year: 2025
+    confidence: low
+
+  hbcs_weight_paed_gastroenteritis:
+    description: "Gyermekkori (0–4 év) gastroenteritis / dehidráció HBCs súlyszáma"
+    unit: weight
+    base: 0.55
+    low: 0.40
+    high: 0.75
+    price_year: 2025
+    evidence_class: assumed
+    source_citation: "9/1993. (IV. 2.) NM rendelet, HBCs besorolási melléklet; a konkrét HBCs‑kód (gyermekgyógyászati enteritis) behelyettesítendő."
+    source_url: "https://net.jogtar.hu/jogszabaly?docid=99300009.nm"
+    source_year: 2024
+    confidence: low
+
+  outpatient_points_per_case:
+    description: "Egy rotavírus‑eset átlagos járóbeteg‑pontszáma (vizit + gyorsteszt + rehidrációs tanácsadás)"
+    unit: point
+    base: 300
+    low: 150
+    high: 600
+    price_year: 2025
+    evidence_class: estimated
+    source_citation: "Járóbeteg szabálykönyv v175 tevékenységi kódok alapján becsülve."
+    source_url: "https://finanszirozas.neak.gov.hu/szabalykonyv/index.asp?verzio=175&mid=0"
+    source_year: 2025
+    confidence: low
+
+  gp_visit_cost:
+    description: "Háziorvosi / házi gyermekorvosi vizit fajlagos (marginális) költsége egy akut esetnél (Ft)"
+    unit: huf
+    base: 4000
+    low: 2500
+    high: 7000
+    price_year: 2025
+    evidence_class: estimated
+    source_citation: "Háziorvosi alapellátás finanszírozása (43/1999. Korm. r.) alapján becsült fajlagos költség."
+    source_url: "https://net.jogtar.hu/jogszabaly?docid=99900043.kor"
+    source_year: 2025
+    confidence: low
+
+  hospitalisation_rate_notified:
+    description: "Bejelentett rotavírus‑esetek kórházi felvételi aránya"
+    unit: ratio
+    base: 0.45
+    low: 0.25
+    high: 0.70
+    evidence_class: assumed
+    source_citation: "ECDC rotavírus‑surveillance és hazai betegségteher‑szakirodalom alapján; a bejelentett esetek forrása részben kórházi."
+    source_url: "https://www.ecdc.europa.eu/en/rotavirus-infection"
+    source_year: 2023
+    confidence: low
+
+  underreporting_multiplier:
+    description: "Bejelentett → orvoshoz forduló valós esetszám szorzó (aluljelentés‑korrekció, közösségi eseteket nem tartalmaz)"
+    unit: multiplier
+    base: 5.0
+    low: 3.0
+    high: 15.0
+    evidence_class: assumed
+    source_citation: "WHO és európai rotavírus‑betegségteher‑becslések alapján; tág tartomány, érzékenységvizsgálatban változtatva."
+    source_url: "https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/rotavirus"
+    source_year: 2021
+    confidence: low
+
+  parental_work_loss_probability:
+    description: "Egy 0–4 éves gyermek rotavírus‑gastroenteritiséhez kapcsolódó szülői munkakiesés valószínűsége (π_szülői)"
+    unit: probability
+    base: 0.75
+    low: 0.50
+    high: 0.95
+    evidence_class: assumed
+    source_citation: "Európai rotavírus költségvizsgálatok (szülői produktivitásveszteség) alapján."
+    source_url: "https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/rotavirus"
+    source_year: 2021
+    confidence: low
+
+  mean_parental_workdays_lost:
+    description: "Egy esetre jutó átlagos szülői kiesett munkanap (d)"
+    unit: days
+    base: 3.0
+    low: 1.5
+    high: 5.0
+    evidence_class: assumed
+    source_citation: "RVGE‑lefolyás 4–7 nap; szülői távollét szakirodalmi tartomány."
+    source_url: "https://www.ecdc.europa.eu/en/rotavirus-infection"
+    source_year: 2023
+    confidence: low
+
+  daily_gross_wage:
+    description: "Napi bruttó átlagkereset (nemzetgazdasági átlag), Ft/nap, 2024. évi árszint"
+    unit: huf_per_day
+    base: 30000
+    low: 25000
+    high: 35000
+    price_year: 2024
+    evidence_class: estimated
+    source_citation: "KSH bruttó átlagkereset, 2024 (havi átlag / munkanapok). Vármegyei bontás behelyettesíthető."
+    source_url: "https://www.ksh.hu/stadat_evkozi_2_1"
+    source_year: 2024
+    confidence: medium
+
+  employer_contribution_rate:
+    description: "Szociális hozzájárulási adó kulcsa (τ), a bruttó bér melletti munkáltatói teher"
+    unit: rate
+    base: 0.13
+    low: 0.13
+    high: 0.13
+    evidence_class: observed
+    source_citation: "2018. évi LII. törvény a szociális hozzájárulási adóról; 2025‑ben 13%."
+    source_url: "https://njt.hu/jogszabaly/2018-52-00-00"
+    source_year: 2025
+    confidence: high
+
+  working_days_per_year:
+    description: "Munkanapok száma évente (D_munkanap)"
+    unit: days
+    base: 253
+    low: 250
+    high: 255
+    evidence_class: observed
+    source_citation: "Munka törvénykönyve szerinti munkanaptár, 2025."
+    source_url: "https://njt.hu/"
+    source_year: 2025
+    confidence: high
+
+  vaccine_course_price:
+    description: "Teljes rotavírus oltási sorozat (Rotarix 2 dózis / RotaTeq 3 dózis) magánpiaci ára (Ft)"
+    unit: huf
+    base: 38000
+    low: 28000
+    high: 48000
+    price_year: 2025
+    evidence_class: estimated
+    source_citation: "PUPHA publikus gyógyszertörzs és patikai fogyasztói árak alapján."
+    source_url: "https://www.neak.gov.hu/letoltheto/ATFO_dok/gyogyszer/PUPHA"
+    source_year: 2025
+    confidence: low
+
+  vaccine_administration_cost:
+    description: "Oltás beadásának díja (Ft/sorozat)"
+    unit: huf
+    base: 3000
+    low: 1500
+    high: 5000
+    price_year: 2025
+    evidence_class: estimated
+    source_citation: "Házi gyermekorvosi oltás beadás becsült fajlagos költsége."
+    source_url: "https://net.jogtar.hu/jogszabaly?docid=99900043.kor"
+    source_year: 2025
+    confidence: low
+
+  vaccine_efficacy:
+    description: "Rotavírus oltás hatásossága súlyos rotavírus‑gastroenteritis ellen"
+    unit: ratio
+    base: 0.85
+    low: 0.75
+    high: 0.93
+    evidence_class: assumed
+    source_citation: "WHO rotavírus‑vakcina állásfoglalás (2021) és regisztrációs vizsgálatok (Vesikari et al.)."
+    source_url: "https://www.who.int/publications/i/item/WHO-WER9628"
+    source_year: 2021
+    confidence: medium

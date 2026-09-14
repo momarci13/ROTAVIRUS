@@ -1,0 +1,198 @@
+district_name,county_name,need_score,spec_top_count,spec_n_specs
+Szerencsi,Borsod-Abaúj-Zemplén,0.8169034810665413,7,7
+Edelényi,Borsod-Abaúj-Zemplén,0.8417868487714039,7,7
+Ózdi,Borsod-Abaúj-Zemplén,0.9307357838291981,7,7
+Csurgói,Somogy,1.0,7,7
+Barcsi,Somogy,0.9305339774559814,7,7
+Balmazújvárosi,Hajdú-Bihar,0.8167316377836498,6,7
+Tabi,Somogy,0.8320165620867751,6,7
+Nagyatádi,Somogy,0.7392248026844868,6,7
+Marcali,Somogy,0.7918043625537501,6,7
+Hajdúhadházi,Hajdú-Bihar,0.7209197712890937,6,7
+Salgótarjáni,Nógrád,0.7692228855526766,5,7
+Jászapáti,Jász-Nagykun-Szolnok,0.7053682913926165,5,7
+Törökszentmiklósi,Jász-Nagykun-Szolnok,0.7033889595067355,5,7
+Tokaji,Borsod-Abaúj-Zemplén,0.7228761229493005,5,7
+Karcagi,Jász-Nagykun-Szolnok,0.6966400822860433,5,7
+Gönci,Borsod-Abaúj-Zemplén,0.7360297478421299,4,7
+Encsi,Borsod-Abaúj-Zemplén,0.7997636612839146,4,7
+Bátonyterenyei,Nógrád,0.7399952504589815,4,7
+Cigándi,Borsod-Abaúj-Zemplén,0.7705589461856596,4,7
+Gyomaendrődi,Békés,0.6976689041385012,4,7
+Nyíradonyi,Hajdú-Bihar,0.6659866195273894,3,7
+Szécsényi,Nógrád,0.6741457814926173,3,7
+Mezőtúri,Jász-Nagykun-Szolnok,0.657591841510066,3,7
+Berettyóújfalui,Hajdú-Bihar,0.6347314476706949,2,7
+Szikszói,Borsod-Abaúj-Zemplén,0.6610128488303547,2,7
+Sarkadi,Békés,0.6191619876870401,2,7
+Szeghalmi,Békés,0.5978120620014734,2,7
+Mezőcsáti,Borsod-Abaúj-Zemplén,0.6737954196009643,2,7
+Sellyei,Baranya,0.5859292637639618,1,7
+Putnoki,Borsod-Abaúj-Zemplén,0.6180646097366592,1,7
+Sátoraljaújhelyi,Borsod-Abaúj-Zemplén,0.6035634617600285,1,7
+Sárospataki,Borsod-Abaúj-Zemplén,0.6908241475154423,1,7
+Siófoki,Somogy,0.5376047367782946,1,7
+Körmendi,Vas,0.4983012425094538,1,7
+Kunhegyesi,Jász-Nagykun-Szolnok,0.659164918310047,1,7
+Derecskei,Hajdú-Bihar,0.5407778069889054,1,7
+Rétsági,Nógrád,0.5746954302710378,1,7
+Tamási,Tolna,0.5665021760182615,1,7
+Püspökladányi,Hajdú-Bihar,0.5807846083965433,1,7
+Kalocsai,Bács-Kiskun,0.3798370582630865,0,7
+Bácsalmási,Bács-Kiskun,0.2544246378377704,0,7
+Szigetvári,Baranya,0.48657761856647264,0,7
+Szentlőrinci,Baranya,0.4477160205667204,0,7
+Siklósi,Baranya,0.415792868416789,0,7
+Pécsváradi,Baranya,0.2587570071368454,0,7
+Hegyháti,Baranya,0.4329798232872194,0,7
+Jánoshalmai,Bács-Kiskun,0.2850663831499843,0,7
+Bajai,Bács-Kiskun,0.19997915294819016,0,7
+Budapest 05. ker.,főváros,0.10243998529918952,0,7
+Budapest 01. ker.,főváros,0.11350382308417899,0,7
+Budapest 04. ker.,főváros,0.14928123385063663,0,7
+Budapest 03. ker.,főváros,0.11596396520647856,0,7
+Budapest 02. ker.,főváros,0.05472541328992005,0,7
+Budapest 21. ker.,főváros,0.23011205603177817,0,7
+Budapest 06. ker.,főváros,0.1894765204206601,0,7
+Budapest 08. ker.,főváros,0.19457566223943998,0,7
+Budapest 07. ker.,főváros,0.1456976960046495,0,7
+Budapest 10. ker.,főváros,0.21062253593176508,0,7
+Budapest 11. ker.,főváros,0.10209840906828309,0,7
+Budapest 12. ker.,főváros,0.0794012772266034,0,7
+Budapest 09. ker.,főváros,0.1688773659415699,0,7
+Budapest 14. ker.,főváros,0.20617799369276174,0,7
+Budapest 15. ker.,főváros,0.13013654515957135,0,7
+Budapest 16. ker.,főváros,0.09487978725081697,0,7
+Budapest 17. ker.,főváros,0.13861566371523715,0,7
+Budapest 18. ker.,főváros,0.1545009853372489,0,7
+Budapest 19. ker.,főváros,0.28423331607849556,0,7
+Budapest 20. ker.,főváros,0.21611515381428587,0,7
+Budapest 13. ker.,főváros,0.14810980192897027,0,7
+Tiszaújvárosi,Borsod-Abaúj-Zemplén,0.4569505683946729,0,7
+Kazincbarcikai,Borsod-Abaúj-Zemplén,0.528188802184196,0,7
+Mezőkövesdi,Borsod-Abaúj-Zemplén,0.5917232348751496,0,7
+Miskolci,Borsod-Abaúj-Zemplén,0.5538391320020073,0,7
+Kiskunmajsai,Bács-Kiskun,0.2326307511636101,0,7
+Kiskőrösi,Bács-Kiskun,0.2176875078088755,0,7
+Kiskunfélegyházi,Bács-Kiskun,0.19381194807988664,0,7
+Kiskunhalasi,Bács-Kiskun,0.2618168812282454,0,7
+Békési,Békés,0.38355154020343435,0,7
+Tiszakécskei,Bács-Kiskun,0.186273426007113,0,7
+Kunszentmiklósi,Bács-Kiskun,0.3734024062703567,0,7
+Békéscsabai,Békés,0.3334388071356007,0,7
+Mezőkovácsházai,Békés,0.529763143381105,0,7
+Gyulai,Békés,0.3087332005313875,0,7
+Orosházi,Békés,0.4072037119541874,0,7
+Szarvasi,Békés,0.49026540235698285,0,7
+Kecskeméti,Bács-Kiskun,0.200453307434521,0,7
+Budapest 22. ker.,főváros,0.10797330484793315,0,7
+Bólyi,Baranya,0.26428471768673134,0,7
+Budapest 23. ker.,főváros,0.1222200251528912,0,7
+Komlói,Baranya,0.48020116643675587,0,7
+Mohácsi,Baranya,0.29208544187594937,0,7
+Pécsi,Baranya,0.22965837206041093,0,7
+Sárbogárdi,Fejér,0.39277494848280925,0,7
+Csornai,Győr-Moson-Sopron,0.04644016115849436,0,7
+Székesfehérvári,Fejér,0.22818603894694828,0,7
+Kisteleki,Csongrád-Csanád,0.19738054536748284,0,7
+Makói,Csongrád-Csanád,0.23548276015396397,0,7
+Dunaújvárosi,Fejér,0.3053240145012894,0,7
+Enyingi,Fejér,0.33813299225020793,0,7
+Csongrádi,Csongrád-Csanád,0.19904137952846943,0,7
+Hódmezővásárhelyi,Csongrád-Csanád,0.22567926392209992,0,7
+Hajdúnánási,Hajdú-Bihar,0.5232359681652449,0,7
+Hajdúszoboszlói,Hajdú-Bihar,0.5511458796228083,0,7
+Debreceni,Hajdú-Bihar,0.46215190678662976,0,7
+Hajdúböszörményi,Hajdú-Bihar,0.5005661336495835,0,7
+Hatvani,Heves,0.4270660224097903,0,7
+Bélapátfalvai,Heves,0.2462031071137756,0,7
+Füzesabonyi,Heves,0.3440411562935149,0,7
+Egri,Heves,0.2822686570371555,0,7
+Esztergomi,Komárom-Esztergom,0.24196086555438964,0,7
+Kisbéri,Komárom-Esztergom,0.22441609132503465,0,7
+Oroszlányi,Komárom-Esztergom,0.33138635065649497,0,7
+Komáromi,Komárom-Esztergom,0.3962524313829443,0,7
+Tatai,Komárom-Esztergom,0.1980720362351353,0,7
+Hevesi,Heves,0.40175154812378544,0,7
+Pétervásárai,Heves,0.41865219862968156,0,7
+Gyöngyösi,Heves,0.25056658999547354,0,7
+Pásztói,Nógrád,0.5538834255336234,0,7
+Balassagyarmati,Nógrád,0.4841799119546359,0,7
+Tatabányai,Komárom-Esztergom,0.33387449712730427,0,7
+Móri,Fejér,0.22234905910186417,0,7
+Martonvásári,Fejér,0.22670045433605396,0,7
+Gárdonyi,Fejér,0.1608791329006497,0,7
+Győri,Győr-Moson-Sopron,0.12214805742226675,0,7
+Kapuvári,Győr-Moson-Sopron,0.2802915287965327,0,7
+Soproni,Győr-Moson-Sopron,0.07683391316818682,0,7
+Téti,Győr-Moson-Sopron,0.1893989990034427,0,7
+Mosonmagyaróvári,Győr-Moson-Sopron,0.09594167454645686,0,7
+Pannonhalmi,Győr-Moson-Sopron,0.056295943707134304,0,7
+Mórahalmi,Csongrád-Csanád,0.23049048047525528,0,7
+Szegedi,Csongrád-Csanád,0.15260754546634525,0,7
+Szentesi,Csongrád-Csanád,0.2631541657192228,0,7
+Bicskei,Fejér,0.14527244907934922,0,7
+Ráckevei,Pest,0.23021237999884436,0,7
+Pilisvörösvári,Pest,0.0,0,7
+Nagykőrösi,Pest,0.23241498459357499,0,7
+Nagykátai,Pest,0.18515320065875263,0,7
+Monori,Pest,0.09414582793704968,0,7
+Gyáli,Pest,0.10229247208217455,0,7
+Gödöllői,Pest,0.07597530400326696,0,7
+Érdi,Pest,0.026261321747605655,0,7
+Dunakeszi,Pest,0.05667382374940899,0,7
+Dabasi,Pest,0.17590424779797897,0,7
+Ceglédi,Pest,0.1774953716532199,0,7
+Budakeszi,Pest,0.020482071749891965,0,7
+Aszódi,Pest,0.08914754524904137,0,7
+Fonyódi,Somogy,0.5744429646766511,0,7
+Szobi,Pest,0.04221091526138252,0,7
+Váci,Pest,0.13683953411429936,0,7
+Fehérgyarmati,Szabolcs-Szatmár-Bereg,0.3592482169234059,0,7
+Csengeri,Szabolcs-Szatmár-Bereg,0.33816924241633706,0,7
+Baktalórántházai,Szabolcs-Szatmár-Bereg,0.32141323344427075,0,7
+Kaposvári,Somogy,0.5230414469941724,0,7
+Ibrányi,Szabolcs-Szatmár-Bereg,0.28746851893968933,0,7
+Kemecsei,Szabolcs-Szatmár-Bereg,0.22297188361679288,0,7
+Kisvárdai,Szabolcs-Szatmár-Bereg,0.1897094353123962,0,7
+Mátészalkai,Szabolcs-Szatmár-Bereg,0.29883060104979453,0,7
+Tiszavasvári,Szabolcs-Szatmár-Bereg,0.3799492439108059,0,7
+Nyíregyházi,Szabolcs-Szatmár-Bereg,0.11467124966404134,0,7
+Nyírbátori,Szabolcs-Szatmár-Bereg,0.32438143796763336,0,7
+Nagykállói,Szabolcs-Szatmár-Bereg,0.23793645819213122,0,7
+Jászberényi,Jász-Nagykun-Szolnok,0.5185335051424033,0,7
+Vecsési,Pest,0.03847818061562793,0,7
+Szentendrei,Pest,0.06304674697659352,0,7
+Szigetszentmiklósi,Pest,0.06050610957070706,0,7
+Kunszentmártoni,Jász-Nagykun-Szolnok,0.5896394213535122,0,7
+Vásárosnaményi,Szabolcs-Szatmár-Bereg,0.30821549734177683,0,7
+Záhonyi,Szabolcs-Szatmár-Bereg,0.21620677747073883,0,7
+Tiszafüredi,Jász-Nagykun-Szolnok,0.5924910723776686,0,7
+Bonyhádi,Tolna,0.34505897544620484,0,7
+Dombóvári,Tolna,0.4218622516074978,0,7
+Paksi,Tolna,0.531148734831201,0,7
+Szolnoki,Jász-Nagykun-Szolnok,0.43510090708874916,0,7
+Szekszárdi,Tolna,0.42832784173539923,0,7
+Tolnai,Tolna,0.42768162170852325,0,7
+Celldömölki,Vas,0.43205781291725126,0,7
+Kőszegi,Vas,0.36247548334822943,0,7
+Sárvári,Vas,0.36008299869586075,0,7
+Szentgotthárdi,Vas,0.3668319750579592,0,7
+Szombathelyi,Vas,0.3144436108096772,0,7
+Vasvári,Vas,0.3738877318189109,0,7
+Ajkai,Veszprém,0.10103292928688333,0,7
+Balatonalmádi,Veszprém,0.053708284650792075,0,7
+Balatonfüredi,Veszprém,0.03557545771757518,0,7
+Devecseri,Veszprém,0.14577825442146092,0,7
+Pápai,Veszprém,0.1200675865812605,0,7
+Sümegi,Veszprém,0.1708085414646199,0,7
+Tapolcai,Veszprém,0.11075744215551271,0,7
+Várpalotai,Veszprém,0.13877538836285597,0,7
+Veszprémi,Veszprém,0.10660207677041757,0,7
+Zirci,Veszprém,0.15669994186691835,0,7
+Keszthelyi,Zala,0.13222378433495025,0,7
+Lenti,Zala,0.35211836185307743,0,7
+Letenyei,Zala,0.2787763422099585,0,7
+Nagykanizsai,Zala,0.2183067448327575,0,7
+Zalaegerszegi,Zala,0.18614289202886605,0,7
+Zalaszentgróti,Zala,0.11952611438161868,0,7
